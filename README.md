@@ -52,15 +52,15 @@ The sensitive data was removed from the configuration files. The next properties
 
 | Property    | Description |
 | ----------- | ----------- |
-| customer.host     | Customer SAPI URL                      |
+| customer.host     | Customer SAPI Host                     |
 | customer.port     | Customer SAPI Port                     |
 | customer.protocol | Customer SAPI protocol: http or https  |
 | customer.basepath | Customer SAPI base path, example: /api |
-| order.host     | Order SAPI URL                      |
+| order.host     | Order SAPI Host                     |
 | order.port     | Order SAPI Port                     |
 | order.protocol | Order SAPI protocol: http or https  |
 | order.basepath | Order SAPI base path, example: /api |
-| item.host     | Item SAPI URL                      |
+| item.host     | Item SAPI Host                     |
 | item.port     | Item SAPI Port                     |
 | item.protocol | Item SAPI protocol: http or https  |
 | item.basepath | Item SAPI base path, example: /api |
