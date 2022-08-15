@@ -1,0 +1,4 @@
+{
+  "secureProperties": ["id", "host"],
+  "minMuleVersion": "4.4.0"
+}

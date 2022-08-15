@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule
+	xmlns:micorp-item-sapi="http://www.mulesoft.org/schema/mule/micorp-item-sapi"
+	xmlns:micorp-order-sapi="http://www.mulesoft.org/schema/mule/micorp-order-sapi"
+	xmlns:micorp-customer-sapi="http://www.mulesoft.org/schema/mule/micorp-customer-sapi"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation=" http://www.mulesoft.org/schema/mule/validation
+	 	http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
+	   	http://www.mulesoft.org/schema/mule/mule-apikit
+	    http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd
+	    http://www.mulesoft.org/schema/mule/http
+	    http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+	    http://www.mulesoft.org/schema/mule/core
+	    http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+	    http://www.mulesoft.org/schema/mule/api-gateway
+	    http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+	    http://www.mulesoft.org/schema/mule/secure-properties
+	    http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+		http://www.mulesoft.org/schema/mule/micorp-customer-sapi 
+		http://www.mulesoft.org/schema/mule/micorp-customer-sapi/current/mule-micorp-customer-sapi.xsd
+		http://www.mulesoft.org/schema/mule/micorp-order-sapi 
+		http://www.mulesoft.org/schema/mule/micorp-order-sapi/current/mule-micorp-order-sapi.xsd
+		http://www.mulesoft.org/schema/mule/micorp-item-sapi 
+		http://www.mulesoft.org/schema/mule/micorp-item-sapi/current/mule-micorp-item-sapi.xsd">
+
+
+	<http:listener-config name="api-httpListenerConfig">
+		<http:listener-connection
+			host="0.0.0.0"
+			port="${http.port}" />
+	</http:listener-config>
+
+	<apikit:config
+		name="api-config"
+		api="${api.spec}"
+		outboundHeadersMapName="outboundHeaders"
+		httpStatusVarName="httpStatus" />
+
+	<configuration-properties
+		doc:name="Configuration properties"
+		doc:id="b1c496d2-cf2b-47f3-8085-1463cc06a026"
+		file="config.yaml" />
+
+
+	<validation:config
+		name="Validation_Config"
+		doc:name="Validation Config"
+		doc:id="8fb0fbd0-0dca-4aed-b7ab-cf094b0c5984" />
+
+
+	<micorp-customer-sapi:config
+		name="Micorp_customer_sapi_Config"
+		doc:name="Micorp-customer-sapi Config"
+		doc:id="f9742801-7d4e-4744-aae1-bfa485ed75a5"
+		property_host="${customer.host}"
+		property_port="${customer.port}"
+		property_protocol="${customer.protocol}"
+		property_basePath="${customer.basepath}" />
+
+
+	<micorp-order-sapi:config
+		name="Micorp_order_sapi_Config"
+		doc:name="Micorp-order-sapi Config"
+		doc:id="3080a1ed-3ed4-4760-a94d-b544e80116e9"
+		property_host="${order.host}"
+		property_port="${order.port}"
+		property_protocol="${order.protocol}"
+		property_basePath="${order.basepath}" />
+
+
+	<micorp-item-sapi:config
+		name="Micorp_item_sapi_Config"
+		doc:name="Micorp-item-sapi Config"
+		doc:id="08611462-9a64-4d12-902f-3360a4a46aeb"
+		property_host="${item.host}"
+		property_port="${item.port}"
+		property_protocol="${item.protocol}"
+		property_basePath="${item.basepath}" />
+
+
+	<api-gateway:autodiscovery
+		apiId="${api.id}"
+		ignoreBasePath="true"
+		doc:name="API Autodiscovery"
+		doc:id="d4869980-7df2-4096-8a25-f5539d94df19"
+		flowRef="api-main" />
+
+
+	<global-property
+		doc:name="Global Property"
+		doc:id="3d58c1dc-abec-4af0-852e-6524f5d0d1e5"
+		name="env"
+		value="local" />
+
+</mule>

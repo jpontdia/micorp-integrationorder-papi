@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>078efef1-d139-48ed-92f5-f8d4a0592374</groupId>
+		<artifactId>micorp-pom</artifactId>
+		<version>1.0.31</version>
+		<relativePath/>
+	</parent>
+
+	<groupId>078efef1-d139-48ed-92f5-f8d4a0592374</groupId>
+	<artifactId>micorp-integrationorder-papi</artifactId>
+	<version>1.0.1</version>
+	<packaging>mule-application</packaging>
+	<name>mule-micorp-integrationorder-papi</name>
+
+	<properties>
+		<!-- Anypoint Visualizer properties -->
+		<api.layer>process</api.layer>
+		<api.tags>micorp, salesforce, order, papi</api.tags>
+
+		<!-- API Spec Rest Connector: micorp-integrationorder-aapi -->
+		<restconnector.api.spec.group>${project.groupId}</restconnector.api.spec.group>
+		<restconnector.api.spec.artifact>micorp-integrationorder-papi</restconnector.api.spec.artifact>
+		<restconnector.api.spec.version>1.0.2</restconnector.api.spec.version>
+	</properties>
+
+	<dependencies>
+
+		<!-- Service Dependencies  -->
+		<!-- RAML: micorp-integrationorder-papi -->
+		<dependency>
+			<groupId>${restconnector.api.spec.group}</groupId>
+			<artifactId>${restconnector.api.spec.artifact}</artifactId>
+			<version>${restconnector.api.spec.version}</version>
+			<classifier>raml</classifier>
+			<type>zip</type>
+		</dependency>
+
+		<!-- JSON Logger dependencies -->
+		<dependency>
+			<groupId>com.mulesoft.connectors</groupId>
+			<artifactId>mule-amqp-connector</artifactId>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.connectors</groupId>
+			<artifactId>mule-jms-connector</artifactId>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>078efef1-d139-48ed-92f5-f8d4a0592374</groupId>
+			<artifactId>json-logger</artifactId>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+
+		<!-- SAPI's connectors -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>mule-plugin-micorp-order-sapi</artifactId>
+			<version>1.0.0</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>mule-plugin-micorp-item-sapi</artifactId>
+			<version>1.0.1</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>mule-plugin-micorp-customer-sapi</artifactId>
+			<version>1.0.2</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+	</dependencies>
+	
+	<!--Repository to get the artifacts for your Anypoint organization -->
+	<repositories>
+		<repository>
+			<id>anypoint-exchange-v3</id>
+			<name>anypoint-exchange repository</name>
+			<url>https://maven.anypoint.mulesoft.com/api/v3/maven</url>
+			<layout>default</layout>
+		</repository>
+	</repositories>			
+</project>

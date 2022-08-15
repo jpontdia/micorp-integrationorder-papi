@@ -1,0 +1,35 @@
+
+http:
+  port: "8081"
+
+# The project artifact and version data 
+project:
+  artifact: "${project.artifactId}"
+  version: "${project.version}"
+  
+# API Specification and autodiscovery
+api:  
+  group: "${restconnector.api.spec.group}"
+  artifact: "${restconnector.api.spec.artifact}"
+  version: "${restconnector.api.spec.version}"
+  spec: "resource::${api.group}:${api.artifact}:${api.version}:raml:zip:api.raml"
+  id: "17910674"
+
+customer:
+  host: "customer-service-url"
+  port: "80"
+  protocol: "HTTP"
+  basepath: "/api"
+  
+order:
+  host: "order-service-url"
+  port: "80"
+  protocol: "HTTP"
+  basepath: "/api"
+
+item:
+  host: "item-service-url"
+  port: "80"
+  protocol: "HTTP"
+  basepath: "/api"
+  
