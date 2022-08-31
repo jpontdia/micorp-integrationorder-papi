@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule
+xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+		xmlns:opentelemetry="http://www.mulesoft.org/schema/mule/opentelemetry"
+	xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger"
 	xmlns:micorp-item-sapi="http://www.mulesoft.org/schema/mule/micorp-item-sapi"
 	xmlns:micorp-order-sapi="http://www.mulesoft.org/schema/mule/micorp-order-sapi"
 	xmlns:micorp-customer-sapi="http://www.mulesoft.org/schema/mule/micorp-customer-sapi"
@@ -8,9 +11,8 @@
 	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation=" http://www.mulesoft.org/schema/mule/validation
+	xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd  http://www.mulesoft.org/schema/mule/validation
 	 	http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
 	   	http://www.mulesoft.org/schema/mule/mule-apikit
 	    http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd
@@ -27,8 +29,9 @@
 		http://www.mulesoft.org/schema/mule/micorp-order-sapi 
 		http://www.mulesoft.org/schema/mule/micorp-order-sapi/current/mule-micorp-order-sapi.xsd
 		http://www.mulesoft.org/schema/mule/micorp-item-sapi 
-		http://www.mulesoft.org/schema/mule/micorp-item-sapi/current/mule-micorp-item-sapi.xsd">
-
+		http://www.mulesoft.org/schema/mule/micorp-item-sapi/current/mule-micorp-item-sapi.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd
+http://www.mulesoft.org/schema/mule/opentelemetry http://www.mulesoft.org/schema/mule/opentelemetry/current/mule-opentelemetry.xsd">
 
 	<http:listener-config name="api-httpListenerConfig">
 		<http:listener-connection
@@ -47,12 +50,10 @@
 		doc:id="b1c496d2-cf2b-47f3-8085-1463cc06a026"
 		file="config.yaml" />
 
-
 	<validation:config
 		name="Validation_Config"
 		doc:name="Validation Config"
 		doc:id="8fb0fbd0-0dca-4aed-b7ab-cf094b0c5984" />
-
 
 	<micorp-customer-sapi:config
 		name="Micorp_customer_sapi_Config"
@@ -63,7 +64,6 @@
 		property_protocol="${customer.protocol}"
 		property_basePath="${customer.basepath}" />
 
-
 	<micorp-order-sapi:config
 		name="Micorp_order_sapi_Config"
 		doc:name="Micorp-order-sapi Config"
@@ -72,7 +72,6 @@
 		property_port="${order.port}"
 		property_protocol="${order.protocol}"
 		property_basePath="${order.basepath}" />
-
 
 	<micorp-item-sapi:config
 		name="Micorp_item_sapi_Config"
@@ -83,7 +82,12 @@
 		property_protocol="${item.protocol}"
 		property_basePath="${item.basepath}" />
 
-
+	<global-property
+		doc:name="Global Property"
+		doc:id="b6dc4740-0d10-4b29-ad03-89eecc2f59bb"
+		name="env"
+		value="local" />
+		
 	<api-gateway:autodiscovery
 		apiId="${api.id}"
 		ignoreBasePath="true"
@@ -91,11 +95,24 @@
 		doc:id="d4869980-7df2-4096-8a25-f5539d94df19"
 		flowRef="api-main" />
 
+	<json-logger:config
+		name="JSON_Logger_Config"
+		doc:name="JSON Logger Config"
+		doc:id="1476c220-0377-4979-ba68-30e1583d70a6"
+		environment="${deployment.env}"
+		applicationName="${project.artifact}"
+		applicationVersion="${project.version}"/>
 
-	<global-property
-		doc:name="Global Property"
-		doc:id="3d58c1dc-abec-4af0-852e-6524f5d0d1e5"
-		name="env"
-		value="local" />
-
+	<opentelemetry:config 
+		name="OpenTelemetry_Config" 
+		doc:name="OpenTelemetry Config" 
+		doc:id="9f4f3fc6-c266-4b71-9c56-66c4943168b9"
+		serviceName="${deployment.name}">
+		<opentelemetry:exporter >
+			<opentelemetry:otlp-exporter collectorEndpoint="${otel.collectorendpoint}"/>
+		</opentelemetry:exporter>
+		<opentelemetry:resource-attributes >
+			<opentelemetry:attribute key="env" value="${env}" />
+		</opentelemetry:resource-attributes>	
+	</opentelemetry:config>
 </mule>

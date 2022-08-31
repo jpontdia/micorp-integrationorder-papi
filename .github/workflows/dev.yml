@@ -35,7 +35,20 @@ jobs:
       - uses: Azure/get-keyvault-secrets@v1
         with:
           keyvault: "jpworks-keyvault" # The name of KeyVault in Azure
-          secrets: 'anypoint-environment-clientid, anypoint-environment-secret, cicd-connectedapp-clientid, cicd-connectedapp-secret, encrypt-key, order-host, item-host, customer-host, mulesoft-nexus-ee-user, mulesoft-nexus-ee-password'  # comma separated list of secret keys to fetch from key vault 
+          secrets: '
+            otel-collector-endpoint,
+            logzio-token,
+            logzio-url,
+            anypoint-environment-clientid,
+            anypoint-environment-secret,
+            cicd-connectedapp-clientid,
+            cicd-connectedapp-secret,
+            encrypt-key,
+            customer-host,
+            item-host,
+            order-host,
+            mulesoft-nexus-ee-user,
+            mulesoft-nexus-ee-password'
         id: secretmanager # ID for secrets that you will reference
       
       # Creates a settings.xml file and configure the anypoint repositories for the organization and the mulesoft EE
@@ -108,20 +121,19 @@ jobs:
             ]
         
       - name: DEBUG - Show settings file
-        if: ${{ true }}
         run: |
           ls -la $HOME
           cat $HOME/.m2/settings.xml
           echo ${{ github.run_number }}
         
       - name: Package and Deploy
-        if: ${{ true }}
         run: |
           ## Get the git commit hash 
           commitHash=$(git rev-parse --short "$GITHUB_SHA")
 
           mvn clean package deploy -DmuleDeploy \
            -Dencrypt.key="${{ steps.secretmanager.outputs.encrypt-key }}" \
+           -Dlogzio.token="${{ steps.secretmanager.outputs.logzio-token }}" \
            -Dcustomer.host="${{ steps.secretmanager.outputs.customer-host }}" \
            -Ditem.host="${{ steps.secretmanager.outputs.item-host }}" \
            -Dorder.host="${{ steps.secretmanager.outputs.order-host }}" \
@@ -129,27 +141,26 @@ jobs:
            -Danypoint.environment.secret="${{ steps.secretmanager.outputs.anypoint-environment-secret }}" \
            -Dcicd.connectedapp.clientid="${{ steps.secretmanager.outputs.cicd-connectedapp-clientid }}" \
            -Dcicd.connectedapp.secret="${{ steps.secretmanager.outputs.cicd-connectedapp-secret }}" \
+           -Dotel.collectorendpoint="${{ steps.secretmanager.outputs.otel-collector-endpoint }}" \
+           -Dlogzio.url="${{ steps.secretmanager.outputs.logzio-url }}" \
            -Ddeployment.prefix= \
            -Ddeployment.env=dev \
            -Dcommit.hash=-$commitHash \
            -Dbuild.id=-${{ github.run_number }}  
 
       - name: Publish MUnit Application Coverage Report
-        if: ${{ true }}
         uses: actions/upload-artifact@master
         with:
           name: munit-application-coverage-report
           path: target/site/munit/coverage/*
       
       - name: Publish MUnit Report
-        if: ${{ true }}
         uses: actions/upload-artifact@master
         with:
           name: munit-test-report
           path: target/surefire-reports/*
 
       - name: Upload Jar as an artifact 
-        if: ${{ false }}
         uses: actions/upload-artifact@master
         with:
           name: artifacts

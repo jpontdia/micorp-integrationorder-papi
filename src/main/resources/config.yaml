@@ -1,4 +1,4 @@
-
+# Service listener configuration
 http:
   port: "8081"
 
@@ -15,9 +15,13 @@ api:
   spec: "resource::${api.group}:${api.artifact}:${api.version}:raml:zip:api.raml"
   id: "17910674"
 
+# Service messages
+messages:
+  order-previously-created: "The order was previously created"
+  
 customer:
   host: "customer-service-url"
-  port: "80"
+  port: "8081"
   protocol: "HTTP"
   basepath: "/api"
   
@@ -33,3 +37,6 @@ item:
   protocol: "HTTP"
   basepath: "/api"
   
+# Logging - Provide next values as system properties
+# logzio.token: "MyToken"
+# logzio.url: "MyLogzioURL"
