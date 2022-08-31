@@ -45,8 +45,11 @@ jobs:
             cicd-connectedapp-secret,
             encrypt-key,
             customer-host,
+            customer-port,
             item-host,
+            item-port,
             order-host,
+            order-port,
             mulesoft-nexus-ee-user,
             mulesoft-nexus-ee-password'
         id: secretmanager # ID for secrets that you will reference
@@ -135,8 +138,11 @@ jobs:
            -Dencrypt.key="${{ steps.secretmanager.outputs.encrypt-key }}" \
            -Dlogzio.token="${{ steps.secretmanager.outputs.logzio-token }}" \
            -Dcustomer.host="${{ steps.secretmanager.outputs.customer-host }}" \
+           -Dcustomer.port="${{ steps.secretmanager.outputs.customer-port }}" \
            -Ditem.host="${{ steps.secretmanager.outputs.item-host }}" \
+           -Ditem.port="${{ steps.secretmanager.outputs.item-port }}" \
            -Dorder.host="${{ steps.secretmanager.outputs.order-host }}" \
+           -Dorder.port="${{ steps.secretmanager.outputs.order-port }}" \
            -Danypoint.environment.clientid="${{ steps.secretmanager.outputs.anypoint-environment-clientid }}" \
            -Danypoint.environment.secret="${{ steps.secretmanager.outputs.anypoint-environment-secret }}" \
            -Dcicd.connectedapp.clientid="${{ steps.secretmanager.outputs.cicd-connectedapp-clientid }}" \

@@ -21,7 +21,7 @@ messages:
   
 customer:
   host: "customer-service-url"
-  port: "8081"
+  port: "80"
   protocol: "HTTP"
   basepath: "/api"
   
