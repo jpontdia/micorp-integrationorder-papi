@@ -27,7 +27,7 @@ output application/json
 output application/json
 ---
 {
-  message: "There was a problem while accessing one of the System API´s"
+  message: "${messages.backend-error}"
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
@@ -120,7 +120,7 @@ output application/json
 output application/json
 ---
 {
-  message: "An internal error was produced"
+  message: "${messages.internal-error}"
 }]]></ee:set-payload>
 				</ee:message>
 			</ee:transform>

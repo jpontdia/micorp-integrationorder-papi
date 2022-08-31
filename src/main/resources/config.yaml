@@ -18,6 +18,10 @@ api:
 # Service messages
 messages:
   order-previously-created: "The order was previously created"
+  order-success: "The order was integrated successfully"
+  internal-error: "An internal error was produced"
+  backend-error: "There was a problem while trying to access the backend repository"
+
   
 customer:
   host: "customer-service-url"

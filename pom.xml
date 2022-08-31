@@ -23,7 +23,7 @@
 		<!-- API Spec Rest Connector: micorp-integrationorder-aapi -->
 		<restconnector.api.spec.group>${project.groupId}</restconnector.api.spec.group>
 		<restconnector.api.spec.artifact>micorp-integrationorder-papi</restconnector.api.spec.artifact>
-		<restconnector.api.spec.version>1.0.4</restconnector.api.spec.version>
+		<restconnector.api.spec.version>1.0.5</restconnector.api.spec.version>
 	</properties>
 
 	<dependencies>

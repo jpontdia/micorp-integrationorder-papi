@@ -352,18 +352,7 @@ output application/json
 				doc:id="204f9e0f-2000-4351-abf1-b6b18a2a0a70"
 				name="createItem" />
 		</foreach>
-		<json-logger:log-end doc:name="Log end" doc:id="7b807d8f-b508-4dc6-9b05-6514d5ddf275" config-ref="JSON_Logger_Config" message='#["poNumber=" ++ vars.payloadInput.orderData.poNumber]'>
-			<json-logger:content ><![CDATA[#[import modules::JSONLoggerModule output application/json
-import * from dw::util::Values
----
-{
-	poNumber: vars.payloadInput.orderData.poNumber
-}
-++
-{
-    openTelemetry: JSONLoggerModule::stringifyNonJSON(vars.OTEL_TRACE_CONTEXT) 
-}]]]></json-logger:content>
-		</json-logger:log-end>
+		<set-variable value='#[vars.outboundHeaders default {} ++ { "x-correlation-id" : vars.correlationId }]' doc:name="outbound Headers" doc:id="354192d8-5ca2-4ede-9883-c4c58a54f539" variableName="outboundHeaders"/>
 		<ee:transform
 			doc:name="Response Message"
 			doc:id="e960426b-8a97-4b16-90a5-c1fa50c6c53b">
@@ -372,7 +361,7 @@ import * from dw::util::Values
 output application/json
 ---
 {
-  message: "The order was integrated successfully"
+  message: "${messages.order-success}"
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
