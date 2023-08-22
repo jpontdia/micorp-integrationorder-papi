@@ -1,3 +1,6 @@
+# Environment where the service is running
+env: local
+
 # Service listener configuration
 http:
   port: "8081"

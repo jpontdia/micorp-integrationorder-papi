@@ -13,12 +13,15 @@
 	<artifactId>micorp-integrationorder-papi</artifactId>
 	<version>1.0.6</version>
 	<packaging>mule-application</packaging>
-	<name>mule-micorp-integrationorder-papi</name>
+	<name>micorp-integrationorder-papi</name>
 
 	<properties>
 		<!-- Anypoint Visualizer properties -->
 		<api.layer>process</api.layer>
 		<api.tags>micorp, salesforce, order, papi</api.tags>
+		
+		<!-- Connectors -->
+		<mule.otel.connector.version>1.0.69</mule.otel.connector.version> 
 
 		<!-- API Spec Rest Connector: micorp-integrationorder-aapi -->
 		<restconnector.api.spec.group>${project.groupId}</restconnector.api.spec.group>
@@ -66,8 +69,8 @@
 		<!-- OpenTelemetry connector -->
 		<dependency>
 			<groupId>078efef1-d139-48ed-92f5-f8d4a0592374</groupId>
-			<artifactId>opentelemetry-connector</artifactId>
-			<version>1.0.20</version>
+			<artifactId>mule-otel-connector</artifactId>
+			<version>${mule.otel.connector.version}</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>		
 
@@ -96,7 +99,7 @@
 	<repositories>
 		<repository>
 			<id>anypoint-exchange-v3</id>
-			<name>anypoint-exchange repository</name>
+			<name>Anypoint Exchange V3</name>
 			<url>https://maven.anypoint.mulesoft.com/api/v3/maven</url>
 			<layout>default</layout>
 		</repository>

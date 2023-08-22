@@ -33,7 +33,7 @@ http://www.mulesoft.org/schema/mule/opentelemetry http://www.mulesoft.org/schema
 }
 ++
 {
-    openTelemetry: JSONLoggerModule::stringifyNonJSON(vars.OTEL_TRACE_CONTEXT) 
+    openTelemetry: JSONLoggerModule::stringifyNonJSON(vars.openTelemetryTrace) 
 }]]]></json-logger:content>
 		</json-logger:log-flow>
 		<ee:transform
@@ -63,7 +63,7 @@ output application/json
 		<micorp-customer-sapi:create-customer
 			doc:name="create customer"
 			doc:id="fc755a0a-d12f-4e2d-b311-2da9bb53a0ab"
-			config-ref="Micorp_customer_sapi_Config" traceparent="#[vars.OTEL_TRACE_CONTEXT.traceparent as String]"/>
+			config-ref="Micorp_customer_sapi_Config" traceparent="#[vars.openTelemetryTrace.traceparent as String]"/>
 		<ee:transform
 			doc:name="get customerId"
 			doc:id="4ac0c798-16e6-47b6-8280-e7cf5f681dab">
@@ -100,7 +100,7 @@ else null
 }
 ++
 {
-    openTelemetry: JSONLoggerModule::stringifyNonJSON(vars.OTEL_TRACE_CONTEXT) 
+    openTelemetry: JSONLoggerModule::stringifyNonJSON(vars.openTelemetryTrace) 
 }]]]></json-logger:content>
 		</json-logger:log-flow>
 		<ee:transform
@@ -126,7 +126,7 @@ output application/json
 		<micorp-order-sapi:create-order
 			doc:name="Create order"
 			doc:id="65f268c3-1c1b-44fb-a371-66c874194334"
-			config-ref="Micorp_order_sapi_Config" traceparent="#[vars.OTEL_TRACE_CONTEXT.traceparent as String]"/>
+			config-ref="Micorp_order_sapi_Config" traceparent="#[vars.openTelemetryTrace.traceparent as String]"/>
 		<ee:transform
 			doc:name="get orderId"
 			doc:id="48e9d8e2-c926-4c63-9752-e298e4a0d171">
@@ -163,7 +163,7 @@ else null
 }
 ++
 {
-    openTelemetry: JSONLoggerModule::stringifyNonJSON(vars.OTEL_TRACE_CONTEXT) 
+    openTelemetry: JSONLoggerModule::stringifyNonJSON(vars.openTelemetryTrace) 
 }]]]></json-logger:content>
 		</json-logger:log-flow>
 		<ee:transform
@@ -185,7 +185,7 @@ output application/json
 		<micorp-item-sapi:create-item 
 			doc:name="Create item" 
 			doc:id="61e3c740-3c0d-47f1-9b34-49055d9be794" 
-			config-ref="Micorp_item_sapi_Config" traceparent="#[vars.OTEL_TRACE_CONTEXT.traceparent as String]"/>
+			config-ref="Micorp_item_sapi_Config" traceparent="#[vars.openTelemetryTrace.traceparent as String]"/>
 		<ee:transform
 			doc:name="get itemId"
 			doc:id="64240791-3f62-43f3-81ee-ddd7a670296e">
@@ -222,7 +222,7 @@ else null
 }
 ++
 {
-    openTelemetry: JSONLoggerModule::stringifyNonJSON(vars.OTEL_TRACE_CONTEXT) 
+    openTelemetry: JSONLoggerModule::stringifyNonJSON(vars.openTelemetryTrace) 
 }]]]></json-logger:content>
 		</json-logger:log-flow>
 		<set-variable
@@ -235,7 +235,7 @@ else null
 			doc:id="7757542e-1eac-458f-a55b-6516707a3f87" 
 			config-ref="Micorp_order_sapi_Config"
 			po-number="#[vars.poNumber]"
-		traceparent="#[vars.OTEL_TRACE_CONTEXT.traceparent as String]"/>
+		traceparent="#[vars.openTelemetryTrace.traceparent as String]"/>
 		<validation:is-true
 			doc:name="is new Order?"
 			doc:id="74fbeb0e-49be-4572-b1bb-9efc5408a968"
@@ -261,7 +261,7 @@ import * from dw::util::Values
 }
 ++
 {
-    openTelemetry: JSONLoggerModule::stringifyNonJSON(vars.OTEL_TRACE_CONTEXT) 
+    openTelemetry: JSONLoggerModule::stringifyNonJSON(vars.openTelemetryTrace) 
 }]]]></json-logger:content>
 		</json-logger:log-flow>
 		<set-variable
@@ -289,7 +289,7 @@ import * from dw::util::Values
 			config-ref="Micorp_customer_sapi_Config" 
 			first-name="#[vars.firstName]"
 			last-name="#[vars.lastName]"
-		traceparent="#[vars.OTEL_TRACE_CONTEXT.traceparent as String]">
+		traceparent="#[vars.openTelemetryTrace.traceparent as String]">
 		
 		
 		
@@ -325,7 +325,7 @@ import * from dw::util::Values
 output application/json
 ---
 {
-    openTelemetry: JSONLoggerModule::stringifyNonJSON(vars.OTEL_TRACE_CONTEXT default "") 
+    openTelemetry: JSONLoggerModule::stringifyNonJSON(vars.openTelemetryTrace) 
 } ++
 {
     payload: JSONLoggerModule::stringifyNonJSON(payload)
