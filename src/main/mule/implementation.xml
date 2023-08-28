@@ -17,11 +17,11 @@
 		http://www.mulesoft.org/schema/mule/validation 
 		http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
 		http://www.mulesoft.org/schema/mule/micorp-customer-sapi 
-		http://www.mulesoft.org/schema/mule/micorp-customer-sapi/current/micorp-customer-sapi.xsd
+		http://www.mulesoft.org/schema/mule/micorp-customer-sapi/current/mule-micorp-customer-sapi.xsd
 		http://www.mulesoft.org/schema/mule/micorp-item-sapi 
-		http://www.mulesoft.org/schema/mule/micorp-item-sapi/current/micorp-item-sapi.xsd
+		http://www.mulesoft.org/schema/mule/micorp-item-sapi/current/mule-micorp-item-sapi.xsd
 		http://www.mulesoft.org/schema/mule/micorp-order-sapi 
-		http://www.mulesoft.org/schema/mule/micorp-order-sapi/current/micorp-order-sapi.xsd
+		http://www.mulesoft.org/schema/mule/micorp-order-sapi/current/mule-micorp-order-sapi.xsd
 	">
 
 	<sub-flow name="createCustomer">
@@ -64,7 +64,6 @@ else null
 ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-
 		<validation:is-true
 			doc:name="was Customer created?"
 			config-ref="Validation_Config"
