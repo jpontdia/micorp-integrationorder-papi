@@ -4,35 +4,34 @@
 
 	<parent>
 		<groupId>078efef1-d139-48ed-92f5-f8d4a0592374</groupId>
-		<artifactId>micorp-pom</artifactId>
-		<version>1.0.37</version>
+		<artifactId>common-parent-pom</artifactId>
+		<version>1.0.3</version>
 		<relativePath/>
 	</parent>
 
 	<groupId>078efef1-d139-48ed-92f5-f8d4a0592374</groupId>
-	<artifactId>micorp-integrationorder-papi</artifactId>
-	<version>1.0.6</version>
+	<artifactId>micorp-integrationorder-papi-app</artifactId>
+	<version>1.3.0</version> 
 	<packaging>mule-application</packaging>
 	<name>micorp-integrationorder-papi</name>
+	<description>Mulesoft service for exporting orders from the Corporate Orders System to Salesforce</description>
 
 	<properties>
-		<!-- Anypoint Visualizer properties -->
-		<api.layer>process</api.layer>
-		<api.tags>micorp, salesforce, order, papi</api.tags>
-		
-		<!-- Connectors -->
-		<mule.otel.connector.version>1.0.69</mule.otel.connector.version> 
+		<!-- Exchange documentation. Details on https://docs.mulesoft.com/exchange/to-publish-assets-maven#publish-an-asset-with-mutable-data -->
+        <categories key="API layer">Experience</categories>
+        <categories key="Backend">Salesforce</categories>
+		<categories key="Asset type">API</categories>
+        <tags>Micorp, Salesforce, Experience</tags>
+		<fields key="sourceCode">https://github.com/jpontdia/micorp-integrationorder-papi</fields>
 
-		<!-- API Spec Rest Connector: micorp-integrationorder-aapi -->
+		<!-- RAML specification -->
 		<restconnector.api.spec.group>${project.groupId}</restconnector.api.spec.group>
 		<restconnector.api.spec.artifact>micorp-integrationorder-papi</restconnector.api.spec.artifact>
 		<restconnector.api.spec.version>1.0.5</restconnector.api.spec.version>
 	</properties>
 
-	<dependencies>
-		<!-- Service Dependencies  -->
-		
-		<!-- RAML: micorp-integrationorder-papi -->
+	<dependencies>		
+		<!--RAML specification -->
 		<dependency>
 			<groupId>${restconnector.api.spec.group}</groupId>
 			<artifactId>${restconnector.api.spec.artifact}</artifactId>
@@ -41,14 +40,15 @@
 			<type>zip</type>
 		</dependency>
 
-		<!-- Logging Dependencies-->
-
-		<!-- JSON Logger -->
+		<!-- Common Assets -->
 		<dependency>
 			<groupId>078efef1-d139-48ed-92f5-f8d4a0592374</groupId>
-			<artifactId>json-logger</artifactId>
+			<artifactId>common-core</artifactId>
+			<version>1.0.1</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
+		
+		<!-- Logging Dependencies-->
 		<dependency>
 		    <groupId>org.apache.logging.log4j</groupId>
 		    <artifactId>log4j-core</artifactId>
@@ -64,15 +64,7 @@
 		<dependency>
   			<groupId>io.logz.sender</groupId>
   			<artifactId>logzio-sender</artifactId>
-		</dependency>
-		
-		<!-- OpenTelemetry connector -->
-		<dependency>
-			<groupId>078efef1-d139-48ed-92f5-f8d4a0592374</groupId>
-			<artifactId>mule-otel-connector</artifactId>
-			<version>${mule.otel.connector.version}</version>
-			<classifier>mule-plugin</classifier>
-		</dependency>		
+		</dependency>	
 
 		<!-- SAPI's connectors -->
 		<dependency>

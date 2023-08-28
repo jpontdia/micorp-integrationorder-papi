@@ -6,8 +6,16 @@
 	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
 	xmlns:http="http://www.mulesoft.org/schema/mule/http"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
-	
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core 
+		http://www.mulesoft.org/schema/mule/core/current/mule.xsd 
+		http://www.mulesoft.org/schema/mule/http 
+		http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+		http://www.mulesoft.org/schema/mule/mule-apikit
+		http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+		http://www.mulesoft.org/schema/mule/ee/core 
+		http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+	">
 	
 	<flow name="api-main">
 		<http:listener
@@ -42,11 +50,9 @@
 		<error-handler ref="global-error-handler" />
 	</flow>
 	
-	
 	<flow name="post:\orders:application\json:api-config">
 		<flow-ref
 			doc:name="integration-order"
-			doc:id="00d1259e-ea3b-4f36-89d0-2d5a3b64f10e"
 			name="integration-order" />
 	</flow>
 </mule>

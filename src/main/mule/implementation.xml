@@ -1,44 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <mule
-	xmlns:opentelemetry="http://www.mulesoft.org/schema/mule/opentelemetry"
-	xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger"
 	xmlns:micorp-order-sapi="http://www.mulesoft.org/schema/mule/micorp-order-sapi"
 	xmlns:micorp-item-sapi="http://www.mulesoft.org/schema/mule/micorp-item-sapi"
 	xmlns:micorp-customer-sapi="http://www.mulesoft.org/schema/mule/micorp-customer-sapi"
-	xmlns:item-api="http://www.mulesoft.org/schema/mule/item-api"
-	xmlns:order-api="http://www.mulesoft.org/schema/mule/order-api"
 	xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
 	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
 	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
-http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
-http://www.mulesoft.org/schema/mule/order-api http://www.mulesoft.org/schema/mule/order-api/current/mule-order-api.xsd
-http://www.mulesoft.org/schema/mule/item-api http://www.mulesoft.org/schema/mule/item-api/current/mule-item-api.xsd
-http://www.mulesoft.org/schema/mule/micorp-customer-sapi http://www.mulesoft.org/schema/mule/micorp-customer-sapi/current/mule-micorp-customer-sapi.xsd
-http://www.mulesoft.org/schema/mule/micorp-item-sapi http://www.mulesoft.org/schema/mule/micorp-item-sapi/current/mule-micorp-item-sapi.xsd
-http://www.mulesoft.org/schema/mule/micorp-order-sapi http://www.mulesoft.org/schema/mule/micorp-order-sapi/current/mule-micorp-order-sapi.xsd
-http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd
-http://www.mulesoft.org/schema/mule/opentelemetry http://www.mulesoft.org/schema/mule/opentelemetry/current/mule-opentelemetry.xsd">
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core 
+		http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/ee/core 
+		http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+		http://www.mulesoft.org/schema/mule/validation 
+		http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
+		http://www.mulesoft.org/schema/mule/micorp-customer-sapi 
+		http://www.mulesoft.org/schema/mule/micorp-customer-sapi/current/micorp-customer-sapi.xsd
+		http://www.mulesoft.org/schema/mule/micorp-item-sapi 
+		http://www.mulesoft.org/schema/mule/micorp-item-sapi/current/micorp-item-sapi.xsd
+		http://www.mulesoft.org/schema/mule/micorp-order-sapi 
+		http://www.mulesoft.org/schema/mule/micorp-order-sapi/current/micorp-order-sapi.xsd
+	">
 
-	<sub-flow
-		name="createCustomer"
-		doc:id="cca95356-774d-4e52-a22d-c22f2e192ba1">
-		<json-logger:log-flow doc:name="Log flow" doc:id="eaf4cc8e-7575-4e88-9554-23ba1e29fb74" config-ref="JSON_Logger_Config" message='#["Create customer firstName=" ++ (vars.payloadInput.customer.firstName default "" )]' >
-			<json-logger:content ><![CDATA[#[import modules::JSONLoggerModule output application/json
----
-{
-	poNumber: vars.payloadInput.orderData.poNumber
-}
-++
-{
-    openTelemetry: JSONLoggerModule::stringifyNonJSON(vars.openTelemetryTrace) 
-}]]]></json-logger:content>
-		</json-logger:log-flow>
-		<ee:transform
-			doc:name="Customer Payload"
-			doc:id="d4460b56-5785-4a67-b1b8-6c9420aae401">
+	<sub-flow name="createCustomer">
+
+		<ee:transform doc:name="Customer Payload">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -54,21 +42,17 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<!--
-		<customer-api:create-customer
-			doc:name="Create customer"
-			doc:id="10ec178f-b03c-499a-a134-365502abfd7d"
-			config-ref="Customer_API_Config" />
-		-->
+
 		<micorp-customer-sapi:create-customer
 			doc:name="create customer"
-			doc:id="fc755a0a-d12f-4e2d-b311-2da9bb53a0ab"
-			config-ref="Micorp_customer_sapi_Config" traceparent="#[vars.openTelemetryTrace.traceparent as String]"/>
-		<ee:transform
-			doc:name="get customerId"
-			doc:id="4ac0c798-16e6-47b6-8280-e7cf5f681dab">
+			config-ref="Micorp_customer_sapi_Config" 
+			traceparent="#[vars.openTelemetryTrace.traceparent as String]"/>
+		
+		<ee:transform doc:name="get customerId">
+		
 			<ee:message>
 			</ee:message>
+		
 			<ee:variables>
 				<ee:set-variable variableName="customerId"><![CDATA[%dw 2.0
 import dw::core::Strings
@@ -80,32 +64,18 @@ else null
 ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+
 		<validation:is-true
 			doc:name="was Customer created?"
-			doc:id="a9518ee7-d703-4445-b8e4-af5dcd3943f3"
 			config-ref="Validation_Config"
 			expression="#[vars.customerId != null]"
 			message="The reference to the Customer could not be retrieved" />
 	</sub-flow>
 
 
-	<sub-flow
-		name="createOrder"
-		doc:id="5e49cd38-a99e-4184-8967-e587a2a8938a">
-		<json-logger:log-flow doc:name="Log flow" doc:id="87976c1d-d947-4a35-bb25-8f33753e64c3" config-ref="JSON_Logger_Config" message='#["Create poNumber=" ++ (vars.payloadInput.orderData.poNumber default "" )]' >
-			<json-logger:content ><![CDATA[#[import modules::JSONLoggerModule output application/json
----
-{
-	poNumber: vars.payloadInput.orderData.poNumber
-}
-++
-{
-    openTelemetry: JSONLoggerModule::stringifyNonJSON(vars.openTelemetryTrace) 
-}]]]></json-logger:content>
-		</json-logger:log-flow>
-		<ee:transform
-			doc:name="Order Payload"
-			doc:id="828ca504-7a5c-41be-8002-8c065a81c7bd">
+	<sub-flow name="createOrder">
+
+		<ee:transform doc:name="Order Payload">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -123,13 +93,13 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+
 		<micorp-order-sapi:create-order
 			doc:name="Create order"
-			doc:id="65f268c3-1c1b-44fb-a371-66c874194334"
-			config-ref="Micorp_order_sapi_Config" traceparent="#[vars.openTelemetryTrace.traceparent as String]"/>
-		<ee:transform
-			doc:name="get orderId"
-			doc:id="48e9d8e2-c926-4c63-9752-e298e4a0d171">
+			config-ref="Micorp_order_sapi_Config" 
+			traceparent="#[vars.openTelemetryTrace.traceparent as String]"/>
+		
+		<ee:transform doc:name="get orderId">
 			<ee:message />
 			<ee:variables>
 				<ee:set-variable variableName="orderId"><![CDATA[%dw 2.0
@@ -144,7 +114,6 @@ else null
 		</ee:transform>
 		<validation:is-true
 			doc:name="was Order created?"
-			doc:id="9299f0e4-172d-4a39-9865-d1d01e60a1fd"
 			config-ref="Validation_Config"
 			expression="#[vars.orderId != null]"
 			message="The reference to the Order could not be retrieved" />
@@ -152,20 +121,8 @@ else null
 
 
 
-	<sub-flow
-		name="createItem"
-		doc:id="d9047303-6e9a-460d-b6df-d4ade8d9bd8b">
-		<json-logger:log-flow doc:name="Log flow" doc:id="f22f2c5d-4d77-4bb9-aff3-9222725553d7" config-ref="JSON_Logger_Config" message='#["Create items for poNumber=" ++ (vars.payloadInput.orderData.poNumber default "" )]' >
-			<json-logger:content ><![CDATA[#[import modules::JSONLoggerModule output application/json
----
-{
-	poNumber: vars.payloadInput.orderData.poNumber
-}
-++
-{
-    openTelemetry: JSONLoggerModule::stringifyNonJSON(vars.openTelemetryTrace) 
-}]]]></json-logger:content>
-		</json-logger:log-flow>
+	<sub-flow name="createItem">
+
 		<ee:transform
 			doc:name="Item Payload"
 			doc:id="3085fbef-9147-423e-914f-a3858b1ad399">
@@ -180,15 +137,17 @@ output application/json
 	size: payload.size,
 	orderId: vars.orderId
 }]]></ee:set-payload>
+
 			</ee:message>
+
 		</ee:transform>
+
 		<micorp-item-sapi:create-item 
 			doc:name="Create item" 
-			doc:id="61e3c740-3c0d-47f1-9b34-49055d9be794" 
-			config-ref="Micorp_item_sapi_Config" traceparent="#[vars.openTelemetryTrace.traceparent as String]"/>
-		<ee:transform
-			doc:name="get itemId"
-			doc:id="64240791-3f62-43f3-81ee-ddd7a670296e">
+			config-ref="Micorp_item_sapi_Config" 
+			traceparent="#[vars.openTelemetryTrace.traceparent as String]"/>
+		
+		<ee:transform doc:name="get itemId">
 			<ee:message />
 			<ee:variables>
 				<ee:set-variable variableName="itemId"><![CDATA[%dw 2.0
@@ -203,156 +162,97 @@ else null
 		</ee:transform>
 		<validation:is-true
 			doc:name="was Item created?"
-			doc:id="e268a987-dc51-4fdc-a2ac-f136d4b15122"
 			config-ref="Validation_Config"
 			expression="#[vars.itemId != null]"
 			message="The reference to the Item could not be retrieved" />
 	</sub-flow>
 
+	<sub-flow name="validateOrder">
 
-
-	<sub-flow
-		name="validateOrder"
-		doc:id="0fde01e8-3cce-4bdf-baa8-28c57bb917ab">
-		<json-logger:log-flow doc:name="Log flow" doc:id="9dbfe57f-1f1e-419f-a283-dbd1f79e5c65" config-ref="JSON_Logger_Config" message='#["Validate if order exist poNumber=" ++ (vars.payloadInput.orderData.poNumber default "" )]'>
-			<json-logger:content ><![CDATA[#[import modules::JSONLoggerModule output application/json
----
-{
-	poNumber: vars.payloadInput.orderData.poNumber
-}
-++
-{
-    openTelemetry: JSONLoggerModule::stringifyNonJSON(vars.openTelemetryTrace) 
-}]]]></json-logger:content>
-		</json-logger:log-flow>
 		<set-variable
 			value="#[vars.payloadInput.orderData.poNumber]"
 			doc:name="find by poNumber"
-			doc:id="24c72e77-29ce-4e8c-80c0-3e4600426ecf"
 			variableName="poNumber" />
+
 		<micorp-order-sapi:get-orders
 			doc:name="Get orders" 
-			doc:id="7757542e-1eac-458f-a55b-6516707a3f87" 
 			config-ref="Micorp_order_sapi_Config"
 			po-number="#[vars.poNumber]"
 		traceparent="#[vars.openTelemetryTrace.traceparent as String]"/>
+
 		<validation:is-true
 			doc:name="is new Order?"
-			doc:id="74fbeb0e-49be-4572-b1bb-9efc5408a968"
 			expression="#[sizeOf(payload) == 0]"
 			message="${messages.order-previously-created}" />
+
 		<flow-ref
 			doc:name="Create Order"
-			doc:id="2e1f96f7-fccd-4407-a7a0-dc6b1de2a6bd"
 			name="createOrder" />
 	</sub-flow>
 
+	<sub-flow name="validateCustomer">
 
-
-	<sub-flow
-		name="validateCustomer"
-		doc:id="4a12c8ed-9f58-4591-95ee-016a55390308">
-		<json-logger:log-flow doc:name="Log flow" doc:id="97e41ef9-7c9e-463d-9177-4831bbe911c0" config-ref="JSON_Logger_Config" message='#["Validate if customer exist firstName=" ++ (vars.payloadInput.customer.firstName default "" )]'>
-			<json-logger:content ><![CDATA[#[import modules::JSONLoggerModule output application/json
-import * from dw::util::Values
----
-{
-	poNumber: vars.payloadInput.orderData.poNumber
-}
-++
-{
-    openTelemetry: JSONLoggerModule::stringifyNonJSON(vars.openTelemetryTrace) 
-}]]]></json-logger:content>
-		</json-logger:log-flow>
 		<set-variable
 			value="#[vars.payloadInput.customer.firstName]"
 			doc:name="find by firstName"
-			doc:id="59687b73-6a17-48d5-8fed-42a129a80d92"
 			variableName="firstName" />
+
 		<set-variable
 			value="#[vars.payloadInput.customer.lastName]"
 			doc:name="find by lastName"
-			doc:id="365278b5-1fa2-45d8-acb4-7290033f8c68"
 			variableName="lastName" />
-		<!--
-		<customer-api:get-customers
-			doc:name="get Customers"
-			doc:id="dd8d9758-9e2c-4e92-8429-a4283e67a73c"
-			config-ref="Micorp_customer_sapi_Config"
-			first-name="#[vars.firstName]"
-			last-name="#[vars.lastName]" />
-		-->
 		
 		<micorp-customer-sapi:get-customers
 			doc:name="getCustomers"  
-			doc:id="d769d899-83cc-4274-8c6a-f8d30343bb71"
 			config-ref="Micorp_customer_sapi_Config" 
 			first-name="#[vars.firstName]"
 			last-name="#[vars.lastName]"
-		traceparent="#[vars.openTelemetryTrace.traceparent as String]">
-		
-		
-		
-		
-		
-		</micorp-customer-sapi:get-customers>
-		<choice
-			doc:name="Customer exist?"
-			doc:id="4b9192d4-49f7-4cc3-bad4-d9169997b7bc">
+			traceparent="#[vars.openTelemetryTrace.traceparent as String]"/>
+
+		<choice doc:name="Customer exist?">
+
 			<when expression="#[sizeOf(payload) &gt; 0]">
 				<set-variable
 					value="#[payload[0].customerId]"
 					doc:name="get customerId"
-					doc:id="d85cc960-a0e3-4752-b3f6-45fa2d8f732a"
 					variableName="customerId" />
 			</when>
+
 			<otherwise>
+			
 				<flow-ref
 					doc:name="Flow Reference"
-					doc:id="4a4b4316-80ea-46d1-84ef-46567697677b"
 					name="createCustomer" />
 			</otherwise>
+
 		</choice>
 	</sub-flow>
 	
 	
-	<flow
-		name="integration-order"
-		doc:id="6abf2d1c-819d-4d2f-98f0-3b48ae697411">
-		<json-logger:log-start doc:name="Log start" doc:id="99e55936-fe42-4376-95ae-0c7e516fedf7" config-ref="JSON_Logger_Config" message='#["Integrate order poNumber=" ++ payload.orderData.poNumber]'>
-			<json-logger:content ><![CDATA[#[import modules::JSONLoggerModule
-import * from dw::util::Values
-output application/json
----
-{
-    openTelemetry: JSONLoggerModule::stringifyNonJSON(vars.openTelemetryTrace) 
-} ++
-{
-    payload: JSONLoggerModule::stringifyNonJSON(payload)
-		mask field("firstName") with "*****"
-		mask field("lastName") with "*****"
-		mask field("address") with "*****"
-		mask field("email") with "*****"     
-}]]]></json-logger:content>
-		</json-logger:log-start>
-		<set-variable value='#[%dw 2.0&#10;output application/java&#10;---&#10;{&#10;    "poNumber": payload.orderData.poNumber default "",&#10;    "firstName": payload.customer.firstName default ""&#10;}]' doc:name="otel Tags" doc:id="442152db-51ac-44be-94ba-241e4562564a" variableName="openTelemetryTags" />
+	<flow name="integration-order">
+		<set-variable 
+			value='#[%dw 2.0&#10;output application/java&#10;---&#10;{&#10;    "poNumber": payload.orderData.poNumber default "",&#10;    "firstName": payload.customer.firstName default ""&#10;}]' doc:name="otel Tags" doc:id="442152db-51ac-44be-94ba-241e4562564a" variableName="openTelemetryTags" />
 		<set-variable
 			value="#[payload]"
 			doc:name="Save Payload"
-			doc:id="89cc325a-42dd-4f14-a644-86760fc3b34b"
 			variableName="payloadInput" />
-		<flow-ref doc:name="Validate Customer" doc:id="0f8d74bf-a2e4-4ec4-967e-aa934081360d" name="validateCustomer" />
-		<flow-ref doc:name="Validate Order" doc:id="6ea193dc-1d24-4c44-b951-31bdacd0ede7" name="validateOrder" />
+		
+		<flow-ref doc:name="Validate Customer" name="validateCustomer" />
+		<flow-ref doc:name="Validate Order" name="validateOrder" />
+		
 		<foreach
 			doc:name="Iterate over Items"
-			doc:id="c012a9f1-1f30-4462-ac79-4a890ef04337"
 			collection="#[vars.payloadInput.items]">
+
 			<flow-ref
 				doc:name="Create Item"
-				doc:id="204f9e0f-2000-4351-abf1-b6b18a2a0a70"
 				name="createItem" />
 		</foreach>
-		<set-variable value='#[vars.outboundHeaders default {} ++ { "x-correlation-id" : vars.correlationId }]' doc:name="outbound Headers" doc:id="354192d8-5ca2-4ede-9883-c4c58a54f539" variableName="outboundHeaders"/>
+
+		<set-variable 
+			value='#[vars.outboundHeaders default {} ++ { "x-correlation-id" : vars.correlationId }]' 
+			doc:name="outbound Headers" 
+			variableName="outboundHeaders"/>
 		<ee:transform
 			doc:name="Response Message"
 			doc:id="e960426b-8a97-4b16-90a5-c1fa50c6c53b">
