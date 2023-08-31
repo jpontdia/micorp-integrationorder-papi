@@ -46,25 +46,21 @@
 
 	<configuration-properties
 		doc:name="Configuration properties"
-		doc:id="b1c496d2-cf2b-47f3-8085-1463cc06a026"
 		file="config.yaml" />
 
 	<validation:config
 		name="Validation_Config"
-		doc:name="Validation Config"
-		doc:id="8fb0fbd0-0dca-4aed-b7ab-cf094b0c5984" />
+		doc:name="Validation Config"/>
 
 	<api-gateway:autodiscovery
 		apiId="${api.id}"
 		ignoreBasePath="true"
 		doc:name="API Autodiscovery"
-		doc:id="d4869980-7df2-4096-8a25-f5539d94df19"
 		flowRef="api-main" />
 
 	<micorp-customer-sapi:config
 		name="Micorp_customer_sapi_Config"
 		doc:name="Micorp-customer-sapi Config"
-		doc:id="f9742801-7d4e-4744-aae1-bfa485ed75a5"
 		property_host="${customer.host}"
 		property_port="${customer.port}"
 		property_protocol="${customer.protocol}"
@@ -73,7 +69,6 @@
 	<micorp-order-sapi:config
 		name="Micorp_order_sapi_Config"
 		doc:name="Micorp-order-sapi Config"
-		doc:id="3080a1ed-3ed4-4760-a94d-b544e80116e9"
 		property_host="${order.host}"
 		property_port="${order.port}"
 		property_protocol="${order.protocol}"
@@ -82,20 +77,13 @@
 	<micorp-item-sapi:config
 		name="Micorp_item_sapi_Config"
 		doc:name="Micorp-item-sapi Config"
-		doc:id="08611462-9a64-4d12-902f-3360a4a46aeb"
 		property_host="${item.host}"
 		property_port="${item.port}"
 		property_protocol="${item.protocol}"
 		property_basePath="${item.basepath}" />
-
-	<import 
-		doc:name="Import" 
-		doc:id="fddb977b-d2f2-419c-bba8-4bcb2f37ccbf" 
-		file="global-configuration.xml" />
 		
-	<import 
-		doc:name="Import" 
-		doc:id="2e0de2c9-ad7c-4349-aa72-e24fd4ca7e5e" 
-		file="global-error.xml" />
+	<import doc:name="Import" file="global-error.xml" />
+		
+	<import doc:name="Import" file="global-configuration.xml" />
 
 </mule>

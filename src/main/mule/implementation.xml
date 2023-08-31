@@ -43,10 +43,11 @@ output application/json
 			</ee:message>
 		</ee:transform>
 
+		<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;if (vars.openTelemetryTrace.traceparent != null)&#10;	vars.openTelemetryTrace.traceparent as String&#10;else&#10;	""]' doc:name="traceparent" doc:id="77feb0fe-d3a3-48dc-a090-292aa6be3b85" variableName="traceparent" />
 		<micorp-customer-sapi:create-customer
 			doc:name="create customer"
 			config-ref="Micorp_customer_sapi_Config" 
-			traceparent="#[vars.openTelemetryTrace.traceparent as String]"/>
+			traceparent="#[vars.traceparent]"/>
 		
 		<ee:transform doc:name="get customerId">
 		
@@ -93,10 +94,11 @@ output application/json
 			</ee:message>
 		</ee:transform>
 
+		<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;if (vars.openTelemetryTrace.traceparent != null)&#10;	vars.openTelemetryTrace.traceparent as String&#10;else&#10;	""]' doc:name="traceparent" doc:id="d952aed0-6f1b-47d6-9162-283abe66f690" variableName="traceparent" />
 		<micorp-order-sapi:create-order
 			doc:name="Create order"
 			config-ref="Micorp_order_sapi_Config" 
-			traceparent="#[vars.openTelemetryTrace.traceparent as String]"/>
+			traceparent="#[vars.traceparent]"/>
 		
 		<ee:transform doc:name="get orderId">
 			<ee:message />
@@ -141,10 +143,11 @@ output application/json
 
 		</ee:transform>
 
+		<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;if (vars.openTelemetryTrace.traceparent != null)&#10;	vars.openTelemetryTrace.traceparent as String&#10;else&#10;	""]' doc:name="traceparent" doc:id="9b59d706-b0cb-4a2d-b7d4-3c5e6132a701" variableName="traceparent" />
 		<micorp-item-sapi:create-item 
 			doc:name="Create item" 
 			config-ref="Micorp_item_sapi_Config" 
-			traceparent="#[vars.openTelemetryTrace.traceparent as String]"/>
+			traceparent="#[vars.traceparent]"/>
 		
 		<ee:transform doc:name="get itemId">
 			<ee:message />
@@ -173,11 +176,16 @@ else null
 			doc:name="find by poNumber"
 			variableName="poNumber" />
 
+		<set-variable 
+			value='#[%dw 2.0&#10;output application/json&#10;---&#10;if (vars.openTelemetryTrace.traceparent != null)&#10;	vars.openTelemetryTrace.traceparent as String&#10;else&#10;	""]' 
+			doc:name="traceparent" 
+			variableName="traceparent" />
+		
 		<micorp-order-sapi:get-orders
 			doc:name="Get orders" 
 			config-ref="Micorp_order_sapi_Config"
 			po-number="#[vars.poNumber]"
-		traceparent="#[vars.openTelemetryTrace.traceparent as String]"/>
+			traceparent="#[vars.traceparent]"/>
 
 		<validation:is-true
 			doc:name="is new Order?"
@@ -201,19 +209,23 @@ else null
 			doc:name="find by lastName"
 			variableName="lastName" />
 		
+		<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;if (vars.openTelemetryTrace.traceparent != null)&#10;	vars.openTelemetryTrace.traceparent as String&#10;else&#10;	""]' 
+			doc:name="traceparent" 
+			variableName="traceparent"/>
+
 		<micorp-customer-sapi:get-customers
 			doc:name="getCustomers"  
 			config-ref="Micorp_customer_sapi_Config" 
 			first-name="#[vars.firstName]"
 			last-name="#[vars.lastName]"
-			traceparent="#[vars.openTelemetryTrace.traceparent as String]"/>
-
+			traceparent="#[vars.traceparent]"/>
+		 
 		<choice doc:name="Customer exist?">
 
 			<when expression="#[sizeOf(payload) &gt; 0]">
 				<set-variable
 					value="#[payload[0].customerId]"
-					doc:name="get customerId"
+					doc:name="get customerId" 
 					variableName="customerId" />
 			</when>
 
@@ -230,7 +242,10 @@ else null
 	
 	<flow name="integration-order">
 		<set-variable 
-			value='#[%dw 2.0&#10;output application/java&#10;---&#10;{&#10;    "poNumber": payload.orderData.poNumber default "",&#10;    "firstName": payload.customer.firstName default ""&#10;}]' doc:name="otel Tags" doc:id="442152db-51ac-44be-94ba-241e4562564a" variableName="openTelemetryTags" />
+			value='#[%dw 2.0&#10;output application/java&#10;---&#10;{&#10;    "poNumber": payload.orderData.poNumber default "",&#10;    "firstName": payload.customer.firstName default ""&#10;}]' 
+			doc:name="otel Tags"  
+			variableName="openTelemetryTags" />
+		
 		<set-variable
 			value="#[payload]"
 			doc:name="Save Payload"

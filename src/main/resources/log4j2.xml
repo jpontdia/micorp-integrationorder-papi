@@ -24,14 +24,14 @@
         
         <AsyncLogger name="org.mule.service.http" level="WARN"/>
         <AsyncLogger name="org.mule.extension.http" level="WARN"/>
-		<AsyncLogger name="com.mulesoft.ot" level="DEBUG"/>
+		<AsyncLogger name="com.mulesoft.ot" level="INFO"/>
 
         <!-- Mule logger -->
         <AsyncLogger name="org.mule.runtime.core.internal.processor.LoggerMessageProcessor" level="INFO"/>
 
         <AsyncRoot level="INFO">
             <AppenderRef ref="file"/>
-            <AppenderRef ref="Logzio"/>
+            <!-- <AppenderRef ref="Logzio"/>-->
             <AppenderRef ref="Console"/>
         </AsyncRoot>
     </Loggers>

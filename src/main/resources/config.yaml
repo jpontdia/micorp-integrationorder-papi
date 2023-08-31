@@ -27,19 +27,19 @@ messages:
 
   
 customer:
-  host: "customer-service-url"
+  host: "micorp-customer-sapi-dev.us-w1.cloudhub.io"
   port: "80"
   protocol: "HTTP"
   basepath: "/api"
   
 order:
-  host: "order-service-url"
+  host: "micorp-order-sapi-dev.us-w1.cloudhub.io"
   port: "80"
   protocol: "HTTP"
   basepath: "/api"
 
 item:
-  host: "item-service-url"
+  host: "micorp-item-sapi-dev.us-w1.cloudhub.io"
   port: "80"
   protocol: "HTTP"
   basepath: "/api"

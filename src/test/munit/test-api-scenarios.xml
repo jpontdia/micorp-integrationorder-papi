@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:micorp-order-sapi="http://www.mulesoft.org/schema/mule/micorp-order-sapi"
+	xmlns:micorp-customer-sapi="http://www.mulesoft.org/schema/mule/micorp-customer-sapi"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" 
+	xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" 
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" 
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd 
+		http://www.mulesoft.org/schema/mule/http
+		http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+		http://www.mulesoft.org/schema/mule/munit 
+		http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd 
+		http://www.mulesoft.org/schema/mule/core 
+		http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  
+		http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+		http://www.mulesoft.org/schema/mule/micorp-customer-sapi 
+		http://www.mulesoft.org/schema/mule/micorp-customer-sapi/current/mule-micorp-customer-sapi.xsd
+		http://www.mulesoft.org/schema/mule/micorp-order-sapi 
+		http://www.mulesoft.org/schema/mule/micorp-order-sapi/current/mule-micorp-order-sapi.xsd">
+	
+	
+	<munit:config name="test-api-scenarios.xml" />
+	
+	<http:request-config
+		name="mUnit_HTTP_Request_configuration"
+		doc:name="HTTP Request configuration" >
+		<http:request-connection host="localhost" port="8081" />		
+	</http:request-config>
+	
+	
+	<munit:test name="test-api-scenarios" description="test-api-scenarios" ignore="false">
+		
+		<munit:enable-flow-sources>
+			<munit:enable-flow-source value="api-main" />
+			<munit:enable-flow-source value="createCustomer" />
+			<munit:enable-flow-source value="createItem" />
+			<munit:enable-flow-source value="createOrder" />
+			<munit:enable-flow-source value="integration-order" />
+			<munit:enable-flow-source value="post:\orders:application\json:api-config" />
+			<munit:enable-flow-source value="validateCustomer" />
+			<munit:enable-flow-source value="validateOrder" />
+		</munit:enable-flow-sources>
+		
+		<munit:behavior>
+			<munit:set-event doc:name="Set Event">
+				<munit:payload
+					value='#[%dw 2.0&#10;output application/json&#10;---&#10;readUrl("classpath://post-request.json") // classpath == src/test/resources]'
+					mediaType="application/json" />
+			</munit:set-event>
+			
+			<logger 
+				level="INFO" 
+				doc:name="payload"
+				message="#[payload]" />
+		</munit:behavior>
+				
+		<munit:execution>
+		
+			<set-variable
+				value="#[payload]"
+				doc:name="Save Payload"
+				variableName="payloadInput" />
+					
+			<flow-ref
+				doc:name="delete-customer"
+				name="delete-customer" />
+		
+			<flow-ref
+				doc:name="delete-order"
+				name="delete-order" />
+				
+			<set-payload value="#[vars.payloadInput]" doc:name="Set Payload" doc:id="9b0ce48a-92e1-4dad-bda5-42e655769ac6" />
+			<flow-ref
+				doc:name="test-integrate-order"
+				name="test-integrate-order" />
+				
+		</munit:execution>		
+	</munit:test>
+	
+	<sub-flow name="delete-customer">
+
+			<logger 
+				level="INFO" 
+				doc:name="delete customer flow"
+				message="delete customer flow" />
+				
+			<flow-ref
+				doc:name="validateCustomer"
+				name="validateCustomer" />
+			
+			<logger 
+				level="INFO" 
+				doc:name="payload"
+				message="#[payload]" />
+				
+			<logger 
+				level="INFO" 
+				doc:name="customerId"
+				message="#[vars.customerId]" />				
+		
+			<logger 
+				level="INFO" 
+				doc:name="delete-customer" 
+				message="delete-customer" />
+				
+			<micorp-customer-sapi:delete-customer 
+				doc:name="Delete customer" 
+				config-ref="Micorp_customer_sapi_Config" 
+				customer-id="#[vars.customerId]"/>	
+	</sub-flow>
+	
+	<sub-flow name="delete-order">
+		<logger 
+			level="INFO" 
+			doc:name="delete order flow"
+			message="delete order flow" />
+
+		<set-variable
+			value="#[vars.payloadInput.orderData.poNumber]"
+			doc:name="find by poNumber"
+			variableName="poNumber" />
+		
+		<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;if (vars.openTelemetryTrace.traceparent != null)&#10;	vars.openTelemetryTrace.traceparent as String&#10;else&#10;	""]' 
+			doc:name="traceparent" 
+			variableName="traceparent"/>
+			
+		<logger 
+			level="INFO" 
+			doc:name="poNumber"
+			message="#[vars.poNumber]" />
+
+		<micorp-order-sapi:get-orders
+			doc:name="Get orders" 
+			config-ref="Micorp_order_sapi_Config"
+			po-number="#[vars.poNumber]"
+			traceparent="#[vars.traceparent]"/>
+			
+		<logger 
+			level="INFO" 
+			doc:name="payload"
+			message="#[payload]" />	
+  							
+		<choice doc:name="order exist?" >
+			<when expression="#[sizeOf(payload) &gt; 0]">
+				<set-variable
+					value="#[payload[0].orderId]"
+					doc:name="get orderId" 
+					variableName="orderId" />
+					
+				<logger 
+					level="INFO" 
+					doc:name="orderId"
+					message="#[vars.orderId]" />				
+		
+				<logger 
+					level="INFO" 
+					doc:name="delete-customer" 
+					message="delete-customer" />
+				
+				<!--  
+				<micorp-order-sapi:delete-order 
+					doc:name="Delete order"
+					config-ref="Micorp_order_sapi_Config"
+					order-id="#[vars.orderId]"
+					traceparent="#[vars.traceparent]"/>
+				-->
+			</when>
+		</choice>
+	</sub-flow>
+
+	<sub-flow name="test-integrate-order">
+
+		<logger 
+			level="INFO" 
+			doc:name="test-integrate-order"
+			message="test-integrate-order" />	
+
+		<logger 
+			level="INFO" 
+			doc:name="payload"
+			message="#[payload]" />	
+								
+		<http:request 
+			method="POST" 
+			doc:name="POST scenario"
+			config-ref="mUnit_HTTP_Request_configuration"
+			path="/api/orders" 
+			outputMimeType="application/json">
+			<http:headers >
+	<![CDATA[#[output application/java
+	---
+	{
+		"Content-Type" : "application/json",
+		"client_id" : "111",
+		"client_secret" : "222"
+	}]]]>
+			</http:headers>
+			<http:response-validator>
+				<http:success-status-code-validator
+					values="201" />
+			</http:response-validator>
+		</http:request>
+				
+		<logger 
+			level="INFO" 
+			doc:name="payload"
+			message="#[payload]" />	
+	</sub-flow>
+	
+</mule>

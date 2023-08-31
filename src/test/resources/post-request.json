@@ -1,0 +1,36 @@
+{
+  "orderData": {
+    "poNumber": "123658",
+    "signatureRequiredFlag": false,
+    "shipInstructions": "Don't break it",
+    "giftWrapFlag": true,
+    "giftWrapMessage": "You rock!",
+    "currencyCode": "USD",
+    "subTotal": 41.5,
+    "email": "test@test.com"
+  },
+  "customer": {
+    "firstName": "Juan",
+    "lastName": "Camaney Unit Testing",
+    "address": {
+      "address1": "1234 Main Street",
+      "city": "San Jose",
+      "zipCode": "12345",
+      "country": "US"
+    }
+  },
+  "items": [
+    {
+      "id": "12345",
+      "category": "T-Shirt",
+      "quantity": 4,
+      "size": "M"
+    },
+    {
+      "id": "34567",
+      "category": "Hoodie",
+      "quantity": 2,
+      "size": "M"
+    }
+  ]
+}
