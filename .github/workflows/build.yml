@@ -1,11 +1,11 @@
-name: Build and deploy
+name: Build
  
 on:
   push:
     branches: [ "main" ]
   pull_request: 
 
-jobs:
+jobs: 
   Mulesoft:
     uses: jpontdia/common-devops/.github/workflows/mulesoft.yml@main
     with:

@@ -1,9 +1,15 @@
 # Salesforce Integration Order PAPI
-![Powered by](https://img.shields.io/badge/Powered%20by-Mulesoft-blue.svg)
+![Powered by](https://img.shields.io/badge/Powered%20by-Mulesoft-535597.svg)
   ![Unit test](https://gist.githubusercontent.com/jpontdia/2f22ca2ddf1ba473d6e2cff61cc2fba9/raw/micorp-integrationorder-papi-ut.svg)
   ![Code coverage](https://gist.githubusercontent.com/jpontdia/2f22ca2ddf1ba473d6e2cff61cc2fba9/raw/micorp-integrationorder-papi-cc.svg)
-  ![Build and deploy](https://github.com/jpontdia/micorp-integrationorder-papi/actions/workflows/build.yml/badge.svg)
-<br> 
+  ![Build](https://github.com/jpontdia/micorp-integrationorder-papi/actions/workflows/build.yml/badge.svg)
+  ![Build job](https://gist.githubusercontent.com/jpontdia/2f22ca2ddf1ba473d6e2cff61cc2fba9/raw/micorp-integrationorder-papi-wf.svg)
+  ![Release](https://gist.githubusercontent.com/jpontdia/2f22ca2ddf1ba473d6e2cff61cc2fba9/raw/micorp-integrationorder-papi-re.svg)
+  ![dev version](https://gist.githubusercontent.com/jpontdia/2f22ca2ddf1ba473d6e2cff61cc2fba9/raw/micorp-integrationorder-papi-dev.svg)
+  ![dev test](https://gist.githubusercontent.com/jpontdia/2f22ca2ddf1ba473d6e2cff61cc2fba9/raw/micorp-integrationorder-papi-dev-test.svg)
+  ![tst version](https://gist.githubusercontent.com/jpontdia/2f22ca2ddf1ba473d6e2cff61cc2fba9/raw/micorp-integrationorder-papi-tst.svg)
+  ![tst test](https://gist.githubusercontent.com/jpontdia/2f22ca2ddf1ba473d6e2cff61cc2fba9/raw/micorp-integrationorder-papi-tst-test.svg)  
+<br>
 
 Mulesoft service for exporting orders from the Corporate Orders System to Salesforce.
 
