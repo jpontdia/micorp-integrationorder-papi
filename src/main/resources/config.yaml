@@ -24,7 +24,6 @@ messages:
   order-success: "The order was integrated successfully"
   internal-error: "An internal error was produced"
   backend-error: "There was a problem while trying to access the backend repository"
-
   
 customer:
   host: "micorp-customer-sapi-dev.us-w1.cloudhub.io"
@@ -43,7 +42,3 @@ item:
   port: "80"
   protocol: "HTTP"
   basepath: "/api"
-  
-# Logging - Provide next values as system properties
-# logzio.token: "MyToken"
-# logzio.url: "MyLogzioURL"
