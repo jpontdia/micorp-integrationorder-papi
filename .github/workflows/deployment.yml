@@ -6,7 +6,7 @@ on:
 
 jobs: 
   Deployment:
-    uses: jpontdia/common-devops/.github/workflows/mulesoft-deployment.yml@main
+    uses: jpontdia/common-devops/.github/workflows/mule-deployment.yml@main
     if: |
       contains(toJson(github.event.issue.labels), 'dev') ||
       contains(toJson(github.event.issue.labels), 'tst') ||
@@ -15,3 +15,9 @@ jobs:
       keyvault-key: jpworks-keyvault
     secrets:
       azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
+
+    # Needed by the Unit Test Action
+    permissions:
+      contents: write
+      issues: write
+      checks: write
