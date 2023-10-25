@@ -16,7 +16,11 @@ api:
   artifact: "${restconnector.api.spec.artifact}"
   version: "${restconnector.api.spec.version}"
   spec: "resource::${api.group}:${api.artifact}:${api.version}:raml:zip:api.raml"
-  id: "17910674"
+  id: "0"
+
+# Open Telemetry configuration
+otel:
+  servicename: "${project.name}:${project.version}"
 
 # Service messages
 messages:
@@ -42,3 +46,8 @@ item:
   port: "80"
   protocol: "HTTP"
   basepath: "/api"
+
+# Components to configure:
+# - OpenTelemtry connector
+# - Logzio (logging platform)
+# - Mulesoft Gatekeeper

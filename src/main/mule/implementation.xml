@@ -43,7 +43,10 @@ output application/json
 			</ee:message>
 		</ee:transform>
 
-		<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;if (vars.openTelemetryTrace.traceparent != null)&#10;	vars.openTelemetryTrace.traceparent as String&#10;else&#10;	""]' doc:name="traceparent" doc:id="77feb0fe-d3a3-48dc-a090-292aa6be3b85" variableName="traceparent" />
+		<set-variable
+			value='#[%dw 2.0&#10;output application/json&#10;---&#10;if (vars.openTelemetryTrace.traceparent != null)&#10;	vars.openTelemetryTrace.traceparent as String&#10;else&#10;	""]' 
+			doc:name="traceparent" 
+			variableName="traceparent" />
 		<micorp-customer-sapi:create-customer
 			doc:name="create customer"
 			config-ref="Micorp_customer_sapi_Config" 
@@ -124,9 +127,8 @@ else null
 
 	<sub-flow name="createItem">
 
-		<ee:transform
-			doc:name="Item Payload"
-			doc:id="3085fbef-9147-423e-914f-a3858b1ad399">
+		<ee:transform doc:name="Item Payload">
+
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -268,8 +270,7 @@ else null
 			doc:name="outbound Headers" 
 			variableName="outboundHeaders"/>
 		<ee:transform
-			doc:name="Response Message"
-			doc:id="e960426b-8a97-4b16-90a5-c1fa50c6c53b">
+			doc:name="Response Message">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
