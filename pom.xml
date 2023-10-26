@@ -24,6 +24,9 @@
         <tags>Micorp, Salesforce, Experience</tags>
 		<fields key="sourceCode">https://github.com/jpontdia/micorp-integrationorder-papi</fields>
 
+		<!-- Code coverage parameters -->
+		<codecoverage.application>75</codecoverage.application>
+		
 		<!-- RAML specification -->
 		<restconnector.api.spec.group>${project.groupId}</restconnector.api.spec.group>
 		<restconnector.api.spec.artifact>micorp-integrationorder-papi</restconnector.api.spec.artifact>
