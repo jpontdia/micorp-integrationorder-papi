@@ -26,13 +26,37 @@
 
 		<!-- Code coverage parameters -->
 		<codecoverage.application>75</codecoverage.application>
-		
+		<codecoverage.flow>0</codecoverage.flow>
+
 		<!-- RAML specification -->
 		<restconnector.api.spec.group>${project.groupId}</restconnector.api.spec.group>
 		<restconnector.api.spec.artifact>micorp-integrationorder-papi</restconnector.api.spec.artifact>
 		<restconnector.api.spec.version>1.0.5</restconnector.api.spec.version>
 	</properties>
 
+	<build>
+    	<plugins>
+			<plugin>
+				<groupId>com.mulesoft.munit.tools</groupId>
+				<artifactId>munit-maven-plugin</artifactId>
+				<version>${munit-maven-plugin.version}</version>
+				<executions>
+				<configuration>
+					<runtimeVersion>${app.runtime}</runtimeVersion>
+					<coverage>
+						<ignoreFiles>
+							<ignoreFile>module-micorp-customer-sapi.xml</ignoreFile>
+							<ignoreFile>module-micorp-item-sapi.xml</ignoreFile>
+							<ignoreFile>module-micorp-order-sapi.xml</ignoreFile>
+							<ignoreFile>global-error.xml</ignoreFile>
+						</ignoreFiles>						
+					</coverage>					
+				</configuration>
+			</plugin>
+    	</plugins>
+	</build>
+
+	
 	<dependencies>		
 		<!--RAML specification -->
 		<dependency>
