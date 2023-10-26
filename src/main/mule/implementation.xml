@@ -72,7 +72,13 @@ else null
 ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<logger level="DEBUG" doc:name="customerId" doc:id="7196daf0-78cf-48ed-b233-61bd8aa0351c" message="#[output application/java --- 'Customer created with customerId=' ++ (vars.customerId as String)]" category="app"/>
+		
+		<logger 
+			level="DEBUG" 
+			doc:name="customerId" 
+			message="#[output application/java --- 'Customer created with customerId=' ++ (vars.customerId as String)]"
+			category="app"/>
+		
 		<validation:is-true
 			doc:name="was Customer created?"
 			config-ref="Validation_Config"
@@ -107,7 +113,11 @@ output application/json
 
 		</ee:transform>
 
-		<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;if (vars.openTelemetryTrace.traceparent != null)&#10;	vars.openTelemetryTrace.traceparent as String&#10;else&#10;	""]' doc:name="OpenTelemetry" doc:id="9b59d706-b0cb-4a2d-b7d4-3c5e6132a701" variableName="traceparent" />
+		<set-variable
+		value='#[%dw 2.0&#10;output application/json&#10;---&#10;if (vars.openTelemetryTrace.traceparent != null)&#10;	vars.openTelemetryTrace.traceparent as String&#10;else&#10;	""]' 
+		doc:name="OpenTelemetry"
+		variableName="traceparent" />
+		
 		<micorp-item-sapi:create-item 
 			doc:name="Create item" 
 			config-ref="Micorp_item_sapi_Config" 
@@ -126,6 +136,7 @@ else null
 ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+		
 		<validation:is-true
 			doc:name="was Item created?"
 			config-ref="Validation_Config"
@@ -331,7 +342,13 @@ output application/json
 			variableName="payloadInput" />
 		
 		<flow-ref doc:name="Validate Customer" name="validateCustomer" />
-		<logger level="DEBUG" doc:name="Logger" doc:id="3c6f11fb-0824-42e7-913a-35a1a9f5f3c3" message="Execute the next process: Validate Order" category="app"/>
+		
+		<logger 
+			level="DEBUG" 
+			doc:name="Logger"
+			message="Execute the next process: Validate Order" 
+			category="app"/>
+			
 		<flow-ref doc:name="Validate Order" name="validateOrder" />
 		
 		<choice doc:name="Choice" >

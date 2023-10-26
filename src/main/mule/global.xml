@@ -35,7 +35,7 @@
 	<http:listener-config name="api-httpListenerConfig">
 		<http:listener-connection
 			host="0.0.0.0"
-			port="${http.port}" />
+			port="${http.port}" readTimeout="120000"/>
 	</http:listener-config>
 
 	<apikit:config
@@ -64,7 +64,7 @@
 		property_host="${customer.host}"
 		property_port="${customer.port}"
 		property_protocol="${customer.protocol}"
-		property_basePath="${customer.basepath}" />
+		property_basePath="${customer.basepath}" property_responseTimeout="30000"/>
 
 	<micorp-order-sapi:config
 		name="Micorp_order_sapi_Config"
@@ -72,7 +72,7 @@
 		property_host="${order.host}"
 		property_port="${order.port}"
 		property_protocol="${order.protocol}"
-		property_basePath="${order.basepath}" />
+		property_basePath="${order.basepath}" property_responseTimeout="30000"/>
 
 	<micorp-item-sapi:config
 		name="Micorp_item_sapi_Config"
@@ -80,7 +80,7 @@
 		property_host="${item.host}"
 		property_port="${item.port}"
 		property_protocol="${item.protocol}"
-		property_basePath="${item.basepath}" />
+		property_basePath="${item.basepath}" property_responseTimeout="30000"/>
 		
 	<import doc:name="Import" file="global-error.xml" />
 		
