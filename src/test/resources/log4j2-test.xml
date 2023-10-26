@@ -23,6 +23,9 @@
         <!-- Mule logger -->
         <AsyncLogger name="org.mule.runtime.core.internal.processor.LoggerMessageProcessor" level="INFO"/>
 
+        <!-- Application logs -->
+        <AsyncLogger name="app" level="DEBUG"/>
+
         <AsyncRoot level="INFO">
             <AppenderRef ref="Console"/>
         </AsyncRoot>

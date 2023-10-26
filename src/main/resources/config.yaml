@@ -26,8 +26,8 @@ otel:
 messages:
   order-previously-created: "The order was previously created"
   order-success: "The order was integrated successfully"
+  order-create-error: "The order could not be created"
   internal-error: "An internal error was produced"
-  backend-error: "There was a problem while trying to access the backend repository"
   
 customer:
   host: "micorp-customer-sapi-dev.us-w1.cloudhub.io"

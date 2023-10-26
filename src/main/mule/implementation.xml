@@ -26,6 +26,10 @@
 
 	<sub-flow name="createCustomer">
 
+		<logger
+			level="DEBUG" doc:name="Logger" 
+			message="#['Create customer with firstName=' ++ vars.firstName default '' ++ ', lastName=' ++ vars.lastName default '']"
+			category="app"/>
 		<ee:transform doc:name="Customer Payload">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
@@ -45,7 +49,7 @@ output application/json
 
 		<set-variable
 			value='#[%dw 2.0&#10;output application/json&#10;---&#10;if (vars.openTelemetryTrace.traceparent != null)&#10;	vars.openTelemetryTrace.traceparent as String&#10;else&#10;	""]' 
-			doc:name="traceparent" 
+			doc:name="OpenTelemetry" 
 			variableName="traceparent" />
 		<micorp-customer-sapi:create-customer
 			doc:name="create customer"
@@ -68,6 +72,7 @@ else null
 ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+		<logger level="DEBUG" doc:name="customerId" doc:id="7196daf0-78cf-48ed-b233-61bd8aa0351c" message="#[output application/java --- 'Customer created with customerId=' ++ (vars.customerId as String)]" category="app"/>
 		<validation:is-true
 			doc:name="was Customer created?"
 			config-ref="Validation_Config"
@@ -76,57 +81,14 @@ else null
 	</sub-flow>
 
 
-	<sub-flow name="createOrder">
-
-		<ee:transform doc:name="Order Payload">
-			<ee:message>
-				<ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-	"poNumber": vars.payloadInput.orderData.poNumber,
-	"signatureRequiredFlag": vars.payloadInput.orderData.signatureRequiredFlag,
-	"shipInstructions": vars.payloadInput.orderData.shipInstructions,
-	"giftWrapFlag": vars.payloadInput.orderData.giftWrapFlag,
-  	"giftWrapMessage": vars.payloadInput.orderData.giftWrapMessage,
-  	"currencyCode": vars.payloadInput.orderData.currencyCode,
-  	"subTotal": vars.payloadInput.orderData.subTotal,
-  	"email": vars.payloadInput.orderData.email,
-  	"customerId": vars.customerId
-}]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-
-		<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;if (vars.openTelemetryTrace.traceparent != null)&#10;	vars.openTelemetryTrace.traceparent as String&#10;else&#10;	""]' doc:name="traceparent" doc:id="d952aed0-6f1b-47d6-9162-283abe66f690" variableName="traceparent" />
-		<micorp-order-sapi:create-order
-			doc:name="Create order"
-			config-ref="Micorp_order_sapi_Config" 
-			traceparent="#[vars.traceparent]"/>
-		
-		<ee:transform doc:name="get orderId">
-			<ee:message />
-			<ee:variables>
-				<ee:set-variable variableName="orderId"><![CDATA[%dw 2.0
-import dw::core::Strings
-var location = attributes.headers.location
----
-if (location != null ) 
-    (location Strings::substringAfterLast "/")
-else null
-]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<validation:is-true
-			doc:name="was Order created?"
-			config-ref="Validation_Config"
-			expression="#[vars.orderId != null]"
-			message="The reference to the Order could not be retrieved" />
-	</sub-flow>
-
-
 
 	<sub-flow name="createItem">
 
+		<logger 
+			level="DEBUG" doc:name="Logger"
+			message="#[output application/java --- 'Create item id=' ++ (payload.id as String) ++ ', for orderId=' ++ vars.orderId]" 
+			category="app"/>
+			
 		<ee:transform doc:name="Item Payload">
 
 			<ee:message>
@@ -145,7 +107,7 @@ output application/json
 
 		</ee:transform>
 
-		<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;if (vars.openTelemetryTrace.traceparent != null)&#10;	vars.openTelemetryTrace.traceparent as String&#10;else&#10;	""]' doc:name="traceparent" doc:id="9b59d706-b0cb-4a2d-b7d4-3c5e6132a701" variableName="traceparent" />
+		<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;if (vars.openTelemetryTrace.traceparent != null)&#10;	vars.openTelemetryTrace.traceparent as String&#10;else&#10;	""]' doc:name="OpenTelemetry" doc:id="9b59d706-b0cb-4a2d-b7d4-3c5e6132a701" variableName="traceparent" />
 		<micorp-item-sapi:create-item 
 			doc:name="Create item" 
 			config-ref="Micorp_item_sapi_Config" 
@@ -171,8 +133,114 @@ else null
 			message="The reference to the Item could not be retrieved" />
 	</sub-flow>
 
+	<sub-flow name="createOrder">
+
+		<logger
+			level="DEBUG" doc:name="Logger"
+			message="#['Create order with poNumber=' ++ vars.payloadInput.orderData.poNumber default '']"
+			category="app"/>
+			
+		<ee:transform doc:name="Order Payload">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"poNumber": vars.payloadInput.orderData.poNumber,
+	"signatureRequiredFlag": vars.payloadInput.orderData.signatureRequiredFlag,
+	"shipInstructions": vars.payloadInput.orderData.shipInstructions,
+	"giftWrapFlag": vars.payloadInput.orderData.giftWrapFlag,
+  	"giftWrapMessage": vars.payloadInput.orderData.giftWrapMessage,
+  	"currencyCode": vars.payloadInput.orderData.currencyCode,
+  	"subTotal": vars.payloadInput.orderData.subTotal,
+  	"email": vars.payloadInput.orderData.email,
+  	"customerId": vars.customerId
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+
+		<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;if (vars.openTelemetryTrace.traceparent != null)&#10;	vars.openTelemetryTrace.traceparent as String&#10;else&#10;	""]' 
+			doc:name="OpenTelemetry"
+			variableName="traceparent" />
+		
+		<micorp-order-sapi:create-order doc:name="Create order" config-ref="Micorp_order_sapi_Config" traceparent="#[vars.traceparent]" />
+		
+		<ee:transform doc:name="get orderId">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="orderId"><![CDATA[%dw 2.0
+import dw::core::Strings
+var location = attributes.headers.location
+---
+if (location != null ) 
+    (location Strings::substringAfterLast "/")
+else null
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		
+		<choice doc:name="Choice" >
+			<when expression="vars.orderId != null">
+				<logger 
+					level="DEBUG" 
+					doc:name="Logger" 
+					message="The order was created successfully" 
+					category="app"/>
+					
+				<foreach doc:name="Iterate over Items" collection="#[vars.payloadInput.items]">
+					<flow-ref doc:name="Create Item" name="createItem" />
+				</foreach>
+				
+				<set-variable 
+					value='#[vars.outboundHeaders default {} ++ { "x-correlation-id" : vars.correlationId }]' 
+					doc:name="outbound Headers"
+					variableName="outboundHeaders" />
+					
+				<logger
+					level="DEBUG" doc:name="Logger" 
+					message="The order was integrated successfully" 
+					category="app"/>
+					
+				<ee:transform doc:name="Response Message">
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  message: "${messages.order-success}"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<logger 
+					level="DEBUG" doc:name="Logger" 
+					message="The order could not be created"
+					category="app"/>
+					
+				<ee:transform doc:name="Response Message"  >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  message: "${messages.order-create-error}"
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[400]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</otherwise>
+		</choice>
+	</sub-flow>
 	<sub-flow name="validateOrder">
 
+		<logger 
+			level="DEBUG" doc:name="Logger" 
+			message="#[output application/java --- 'Validate order with poNumber=' ++ (vars.payloadInput.orderData.poNumber default '' as String)]" 
+			category="app"/>
+			
 		<set-variable
 			value="#[vars.payloadInput.orderData.poNumber]"
 			doc:name="find by poNumber"
@@ -180,7 +248,7 @@ else null
 
 		<set-variable 
 			value='#[%dw 2.0&#10;output application/json&#10;---&#10;if (vars.openTelemetryTrace.traceparent != null)&#10;	vars.openTelemetryTrace.traceparent as String&#10;else&#10;	""]' 
-			doc:name="traceparent" 
+			doc:name="OpenTelemtry" 
 			variableName="traceparent" />
 		
 		<micorp-order-sapi:get-orders
@@ -188,31 +256,28 @@ else null
 			config-ref="Micorp_order_sapi_Config"
 			po-number="#[vars.poNumber]"
 			traceparent="#[vars.traceparent]"/>
-
-		<validation:is-true
-			doc:name="is new Order?"
-			expression="#[sizeOf(payload) == 0]"
-			message="${messages.order-previously-created}" />
-
-		<flow-ref
-			doc:name="Create Order"
-			name="createOrder" />
 	</sub-flow>
 
 	<sub-flow name="validateCustomer">
 
+		<logger 
+			level="DEBUG" 
+			doc:name="Logger" 
+			message="#['Validate customer with firstName=' ++ vars.payloadInput.customer.firstName default '' ++ ', lastName=' ++ vars.payloadInput.customer.lastName default '']" 
+			category="app"/>
+			
 		<set-variable
 			value="#[vars.payloadInput.customer.firstName]"
-			doc:name="find by firstName"
+			doc:name="firstName"
 			variableName="firstName" />
 
 		<set-variable
 			value="#[vars.payloadInput.customer.lastName]"
-			doc:name="find by lastName"
+			doc:name="lastName"
 			variableName="lastName" />
 		
 		<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;if (vars.openTelemetryTrace.traceparent != null)&#10;	vars.openTelemetryTrace.traceparent as String&#10;else&#10;	""]' 
-			doc:name="traceparent" 
+			doc:name="OpenTelemetry" 
 			variableName="traceparent"/>
 
 		<micorp-customer-sapi:get-customers
@@ -225,6 +290,10 @@ else null
 		<choice doc:name="Customer exist?">
 
 			<when expression="#[sizeOf(payload) &gt; 0]">
+				<logger level="DEBUG" doc:name="Logger" 
+					message="#['The customer exists with customerId=' ++ payload[0].customerId]"
+					category="app"/>
+					
 				<set-variable
 					value="#[payload[0].customerId]"
 					doc:name="get customerId" 
@@ -233,8 +302,12 @@ else null
 
 			<otherwise>
 			
+				<logger level="DEBUG" doc:name="Logger" 
+					message="Customer doesn't exist" 
+					category="app"/>
+					
 				<flow-ref
-					doc:name="Flow Reference"
+					doc:name="Create Customer"
 					name="createCustomer" />
 			</otherwise>
 
@@ -243,9 +316,13 @@ else null
 	
 	
 	<flow name="integration-order">
+		<logger
+			level="INFO" doc:name="Logger" category="app"
+			message="#['Integrate order with poNumber=' ++ payload.orderData.poNumber default '']"/>
+			
 		<set-variable 
 			value='#[%dw 2.0&#10;output application/java&#10;---&#10;{&#10;    "poNumber": payload.orderData.poNumber default "",&#10;    "firstName": payload.customer.firstName default ""&#10;}]' 
-			doc:name="otel Tags"  
+			doc:name="OpenTelemetry Tags"  
 			variableName="openTelemetryTags" />
 		
 		<set-variable
@@ -254,32 +331,33 @@ else null
 			variableName="payloadInput" />
 		
 		<flow-ref doc:name="Validate Customer" name="validateCustomer" />
+		<logger level="DEBUG" doc:name="Logger" doc:id="3c6f11fb-0824-42e7-913a-35a1a9f5f3c3" message="Execute the next process: Validate Order" category="app"/>
 		<flow-ref doc:name="Validate Order" name="validateOrder" />
 		
-		<foreach
-			doc:name="Iterate over Items"
-			collection="#[vars.payloadInput.items]">
-
-			<flow-ref
-				doc:name="Create Item"
-				name="createItem" />
-		</foreach>
-
-		<set-variable 
-			value='#[vars.outboundHeaders default {} ++ { "x-correlation-id" : vars.correlationId }]' 
-			doc:name="outbound Headers" 
-			variableName="outboundHeaders"/>
-		<ee:transform
-			doc:name="Response Message">
-			<ee:message>
-				<ee:set-payload><![CDATA[%dw 2.0
+		<choice doc:name="Choice" >
+			<when expression="#[sizeOf(payload) == 0]">
+				<flow-ref doc:name="Create Order" name="createOrder" />
+			</when>
+			<otherwise >
+				<logger level="DEBUG" doc:name="Logger" 
+					message="The order was previously created" 
+					category="app" />
+					
+				<ee:transform doc:name="Response Message" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
 {
-  message: "${messages.order-success}"
+  message: "${messages.order-previously-created}"
 }]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[400]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</otherwise>
+		</choice>
 		<error-handler ref="global-error-handler">
 		</error-handler>
 	</flow>

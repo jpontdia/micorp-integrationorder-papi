@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:micorp-order-sapi="http://www.mulesoft.org/schema/mule/micorp-order-sapi"
-	xmlns:micorp-customer-sapi="http://www.mulesoft.org/schema/mule/micorp-customer-sapi"
-	xmlns:http="http://www.mulesoft.org/schema/mule/http" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" 
-	xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+<mule xmlns:micorp-item-sapi="http://www.mulesoft.org/schema/mule/micorp-item-sapi"
+	xmlns:micorp-order-sapi="http://www.mulesoft.org/schema/mule/micorp-order-sapi"
+	xmlns:micorp-customer-sapi="http://www.mulesoft.org/schema/mule/micorp-customer-sapi" 
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" 
 	xmlns="http://www.mulesoft.org/schema/mule/core" 
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" 
-	xsi:schemaLocation="
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
-http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd 
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
 		http://www.mulesoft.org/schema/mule/http
 		http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
 		http://www.mulesoft.org/schema/mule/munit 
@@ -22,7 +20,8 @@ http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/mu
 		http://www.mulesoft.org/schema/mule/micorp-customer-sapi 
 		http://www.mulesoft.org/schema/mule/micorp-customer-sapi/current/mule-micorp-customer-sapi.xsd
 		http://www.mulesoft.org/schema/mule/micorp-order-sapi 
-		http://www.mulesoft.org/schema/mule/micorp-order-sapi/current/mule-micorp-order-sapi.xsd">
+		http://www.mulesoft.org/schema/mule/micorp-order-sapi/current/mule-micorp-order-sapi.xsd
+		http://www.mulesoft.org/schema/mule/micorp-item-sapi http://www.mulesoft.org/schema/mule/micorp-item-sapi/current/mule-micorp-item-sapi.xsd">
 	
 	
 	<munit:config name="test-api-scenarios.xml" />
@@ -67,15 +66,14 @@ http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/mu
 				doc:name="Save Payload"
 				variableName="payloadInput" />
 					
+			<flow-ref doc:name="delete-order" name="delete-order" />
+			
 			<flow-ref
 				doc:name="delete-customer"
 				name="delete-customer" />
-		
-			<flow-ref
-				doc:name="delete-order"
-				name="delete-order" />
 				
-			<set-payload value="#[vars.payloadInput]" doc:name="Set Payload" doc:id="9b0ce48a-92e1-4dad-bda5-42e655769ac6" />
+			<set-payload value="#[vars.payloadInput]" doc:name="Set Payload" />
+			
 			<flow-ref
 				doc:name="test-integrate-order"
 				name="test-integrate-order" />
@@ -83,95 +81,93 @@ http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/mu
 		</munit:execution>		
 	</munit:test>
 	
+	<sub-flow name="delete-order">
+		<logger 
+			level="INFO" 
+			doc:name="start" 
+			message="#[output application/java --- 'Querying Order with poNumber=' ++ (vars.payloadInput.orderData.poNumber as String)]" />
+
+		<micorp-order-sapi:get-orders 
+			doc:name="Get orders" 
+			config-ref="Micorp_order_sapi_Config" 
+			po-number="#[vars.payloadInput.orderData.poNumber]" />
+			
+		<logger 
+			level="INFO" 
+			doc:name="payload" 
+			message="#[payload]" />	
+  							
+		<choice doc:name="order exist?">
+			<when expression="#[sizeOf(payload) &gt; 0]">
+					
+				<logger 
+					level="INFO" 
+					doc:name="orderId" 
+					message="#[output application/java --- 'Order exist with orderId=' ++ (payload[0].orderId as String) ++  ', getting the items associated with the order']" />
+				
+				<set-variable value="#[payload[0].orderId]" doc:name="orderId" variableName="orderId" />
+				
+				<micorp-item-sapi:get-items 
+					doc:name="Get Items" 
+					config-ref="Micorp_item_sapi_Config" 
+					order-id="#[payload[0].orderId]" />
+					
+				<logger level="INFO" doc:name="Logger"  message="#[output application/json --- payload]" />
+				
+				<foreach doc:name="Iterate over Items" collection="#[payload]">
+					<logger level="INFO" doc:name="Logger" message="#[output application/java --- 'Delete itemId=' ++ (payload.itemId as String)]" />
+					<micorp-item-sapi:delete-item doc:name="Delete item"  config-ref="Micorp_item_sapi_Config" item-id="#[payload.itemId]" />
+				</foreach>
+				<logger 
+					level="INFO" 
+					doc:name="delete order" 
+					message="#[output application/java --- 'Delete orderId=' ++ (vars.orderId as String)]" />
+					
+				<micorp-order-sapi:delete-order 
+					doc:name="Delete order" 
+					config-ref="Micorp_order_sapi_Config"
+					order-id="#[vars.orderId]" />
+					
+			</when>
+			<otherwise>
+				<logger level="INFO" doc:name="Logger"  message="Order doesn't exist" />
+			</otherwise>
+		</choice>
+	</sub-flow>
 	<sub-flow name="delete-customer">
 
 			<logger 
 				level="INFO" 
-				doc:name="delete customer flow"
+				doc:name="start"
 				message="delete customer flow" />
 				
-			<flow-ref
-				doc:name="validateCustomer"
-				name="validateCustomer" />
+			<micorp-customer-sapi:get-customers 
+				doc:name="getCustomers" 
+				config-ref="Micorp_customer_sapi_Config" 
+				first-name="#[vars.payloadInput.customer.firstName]" 
+				last-name="#[vars.payloadInput.customer.lastName]"/>
 			
 			<logger 
 				level="INFO" 
 				doc:name="payload"
 				message="#[payload]" />
 				
-			<logger 
-				level="INFO" 
-				doc:name="customerId"
-				message="#[vars.customerId]" />				
-		
-			<logger 
-				level="INFO" 
-				doc:name="delete-customer" 
-				message="delete-customer" />
-				
-			<micorp-customer-sapi:delete-customer 
-				doc:name="Delete customer" 
-				config-ref="Micorp_customer_sapi_Config" 
-				customer-id="#[vars.customerId]"/>	
-	</sub-flow>
-	
-	<sub-flow name="delete-order">
-		<logger 
-			level="INFO" 
-			doc:name="delete order flow"
-			message="delete order flow" />
-
-		<set-variable
-			value="#[vars.payloadInput.orderData.poNumber]"
-			doc:name="find by poNumber"
-			variableName="poNumber" />
-		
-		<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;if (vars.openTelemetryTrace.traceparent != null)&#10;	vars.openTelemetryTrace.traceparent as String&#10;else&#10;	""]' 
-			doc:name="traceparent" 
-			variableName="traceparent"/>
-			
-		<logger 
-			level="INFO" 
-			doc:name="poNumber"
-			message="#[vars.poNumber]" />
-
-		<micorp-order-sapi:get-orders
-			doc:name="Get orders" 
-			config-ref="Micorp_order_sapi_Config"
-			po-number="#[vars.poNumber]"
-			traceparent="#[vars.traceparent]"/>
-			
-		<logger 
-			level="INFO" 
-			doc:name="payload"
-			message="#[payload]" />	
-  							
-		<choice doc:name="order exist?" >
-			<when expression="#[sizeOf(payload) &gt; 0]">
-				<set-variable
-					value="#[payload[0].orderId]"
-					doc:name="get orderId" 
-					variableName="orderId" />
+		<choice doc:name="Customer exist?"  >
+			<when expression="#[sizeOf(payload) &gt; 0]" >
+				<logger 
+					level="INFO" 
+					doc:name="customerId" 
+					message="#[output application/java --- 'Delete customerId=' ++ (payload[0].customerId as String)]" />
 					
-				<logger 
-					level="INFO" 
-					doc:name="orderId"
-					message="#[vars.orderId]" />				
-		
-				<logger 
-					level="INFO" 
-					doc:name="delete-customer" 
-					message="delete-customer" />
-				
-				<!--  
-				<micorp-order-sapi:delete-order 
-					doc:name="Delete order"
-					config-ref="Micorp_order_sapi_Config"
-					order-id="#[vars.orderId]"
-					traceparent="#[vars.traceparent]"/>
-				-->
+				<micorp-customer-sapi:delete-customer
+					doc:name="Delete customer" 
+					config-ref="Micorp_customer_sapi_Config" 
+					customer-id="#[payload[0].customerId]"/>
 			</when>
-		</choice>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" message="Customer doesn't exist"/>
+			</otherwise>
+		</choice>	
 	</sub-flow>
 
 	<sub-flow name="test-integrate-order">
@@ -179,8 +175,10 @@ http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/mu
 		<logger 
 			level="INFO" 
 			doc:name="test-integrate-order"
-			message="test-integrate-order" />	
+			message="Integration Order Test Flow. Start process" />	
 
+		<set-payload value="#[vars.payloadInput]" doc:name="Set Payload" />
+		
 		<logger 
 			level="INFO" 
 			doc:name="payload"
@@ -191,9 +189,8 @@ http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/mu
 			doc:name="POST scenario"
 			config-ref="mUnit_HTTP_Request_configuration"
 			path="/api/orders" 
-			outputMimeType="application/json">
-			<http:headers >
-	<![CDATA[#[output application/java
+			outputMimeType="application/json" sendCorrelationId="AUTO">
+			<http:headers ><![CDATA[#[output application/java
 	---
 	{
 		"Content-Type" : "application/json",
