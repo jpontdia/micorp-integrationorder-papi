@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>078efef1-d139-48ed-92f5-f8d4a0592374</groupId>
 		<artifactId>common-parent-pom</artifactId>
-		<version>1.0.27</version>
+		<version>1.0.30</version>
 		<relativePath/>
 	</parent>
 
@@ -21,7 +21,7 @@
         <categories key="API layer">Experience</categories>
         <categories key="Backend">Salesforce</categories>
 		<categories key="Asset type">API</categories>
-        <tags>Micorp, Salesforce, Experience</tags>
+        <tags>Micorp, Salesforce, Experience, Order</tags>
 		<fields key="sourceCode">https://github.com/jpontdia/micorp-integrationorder-papi</fields>
 
 		<!-- Code coverage parameters -->
@@ -72,7 +72,7 @@
 		<dependency>
 			<groupId>078efef1-d139-48ed-92f5-f8d4a0592374</groupId>
 			<artifactId>common-core</artifactId>
-			<version>1.0.21</version>
+			<version>1.0.23</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
 		
